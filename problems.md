@@ -28,6 +28,6 @@
 ## 트리 (LCA, BFS)
 
 - [ ] 230707_조직개편
-- [x] 230520_미생물가계도
+- [x] [230520_미생물가계도](https://github.com/nampluskr/sw_pro/tree/main/solved/230520_%EB%AF%B8%EC%83%9D%EB%AC%BC%EA%B0%80%EA%B3%84%EB%8F%84)
 - [x] 230324_계통
 - [x] 230211_우산창고
