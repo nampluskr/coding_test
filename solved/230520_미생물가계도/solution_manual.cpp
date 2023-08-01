@@ -1,15 +1,15 @@
-#if 1
+﻿#if 1
 // Manual 885 ms: Tree (LCA), Partition (Range update + Point query)
 // Array
 #include <unordered_map>
 #include <string>
 using namespace std;
 
-#define NUM_NODES    12'001
-#define NUM_VALUES    1'000'001
+#define NUM_NODES   12001
+#define NUM_VALUES  1000001
 
-#define BUCKET_SIZE    1'000    // sqrt(NUM_VALUES);
-#define NUM_BUCKETS    1'001    // ceil((double)NUM_VALUES / N)
+#define BUCKET_SIZE 1000    // sqrt(NUM_VALUES);
+#define NUM_BUCKETS 1001    // ceil((double)NUM_VALUES / N)
 
 struct Node {
     int parent;

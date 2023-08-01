@@ -1,4 +1,4 @@
-// Manual 704 ms: Partition (Point update)
+﻿// Manual 704 ms: Partition (Point update)
 #if 1
 #define NUM_VALUES  200'000     // init() + add()
 #define BUCKET_SIZE 447         // sqrt(NUM_VALUES)

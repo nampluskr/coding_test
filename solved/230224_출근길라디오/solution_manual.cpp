@@ -1,8 +1,8 @@
 #if 1
 // Manual 717 ms: Partition (Point update + Range query)
 // Array, Linked List
-#define NUM_ROADS 100'000
-#define NUM_TYPES 1'000
+#define NUM_ROADS 100000
+#define NUM_TYPES 1000
 
 #define BUCKET_SIZE     316     // sqrt(NUM_ROADS)
 #define NUM_BUCKETS     317     // ceil((double)NUM_ROADS / NUM_BUCKETS)
@@ -71,8 +71,8 @@ struct Partition {
 Partition part;
 
 //////////////////////////////////////////////////////////////////////////
-// N: ÁöÁ¡ÀÇ °³¼ö(10 ¡Â N ¡Â 100,000)
-// M : µµ·ÎÀÇ Á¾·ù(1 ¡Â M ¡Â 1,000)
+// N: ì§€ì ì˜ ê°œìˆ˜(10 â‰¤ N â‰¤ 100,000)
+// M : ë„ë¡œì˜ ì¢…ë¥˜(1 â‰¤ M â‰¤ 1,000)
 void init(int N, int M, int mType[], int mTime[])
 {
     roadCnt = N - 1;

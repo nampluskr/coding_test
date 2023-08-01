@@ -1,4 +1,4 @@
-#if 0
+ï»¿#if 0
 // STL 829 ms: Partition (Point update + Range query)
 #include <vector>
 using namespace std;
@@ -51,8 +51,8 @@ struct Partition {
 Partition part;
 
 //////////////////////////////////////////////////////////////////////////
-// N: ÁöÁ¡ÀÇ °³¼ö(10 ¡Â N ¡Â 100,000)
-// M : µµ·ÎÀÇ Á¾·ù(1 ¡Â M ¡Â 1,000)
+// N: ì§€ì ì˜ ê°œìˆ˜(10 â‰¤ N â‰¤ 100,000)
+// M : ë„ë¡œì˜ ì¢…ë¥˜(1 â‰¤ M â‰¤ 1,000)
 void init(int N, int M, int mType[], int mTime[])
 {
     roadCnt = 0;

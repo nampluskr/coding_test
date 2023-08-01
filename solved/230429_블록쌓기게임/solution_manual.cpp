@@ -1,17 +1,17 @@
-#if 0
+ï»¿#if 0
 // Manual 871 ms: Partion (Range update + total query)
 // Array
-#define NUM_VALUES    1'000'000
-#define BUCKET_SIZE    1'000        // sqrt(NUM_VALUES)
-#define NUM_BUCKETS    1'000        // ceil((double)NUM_VALUES / BUCKET_SIZE)
-#define INT32_MAX    2147483647    // INT32_MAX
+#define NUM_VALUES      1000000
+#define BUCKET_SIZE     1000        // sqrt(NUM_VALUES)
+#define NUM_BUCKETS     1000        // ceil((double)NUM_VALUES / BUCKET_SIZE)
+#define INT32_MAX       2147483647    // INT32_MAX
 
 inline int min(int a, int b) { return (a < b) ? a : b; }
 inline int max(int a, int b) { return (a > b) ? a : b; }
 
 struct Result {
-    int top;    // °¡Àå ³ôÀº ºí·ÏÀÇ ³ôÀÌ
-    int count;    // ³²¾Æ ÀÖ´Â ºí·ÏµéÀÇ °³¼ö¸¦ 1,000,000À¸·Î ³ª´« ³ª¸ÓÁö
+    int top;    // ê°€ì¥ ë†’ì€ ë¸”ë¡ì˜ ë†’ì´
+    int count;    // ë‚¨ì•„ ìˆëŠ” ë¸”ë¡ë“¤ì˜ ê°œìˆ˜ë¥¼ 1,000,000ìœ¼ë¡œ ë‚˜ëˆˆ ë‚˜ë¨¸ì§€
 };
 
 struct Data {

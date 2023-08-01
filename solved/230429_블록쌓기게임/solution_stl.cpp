@@ -1,10 +1,10 @@
-// STL 1728 ms: Partion (Range update + total query)
+ï»¿// STL 1728 ms: Partion (Range update + total query)
 #include <vector>
 using namespace std;
 
 struct Result {
-    int top;    // °¡Àå ³ôÀº ºí·ÏÀÇ ³ôÀÌ
-    int count;    // ³²¾Æ ÀÖ´Â ºí·ÏµéÀÇ °³¼ö¸¦ 1,000,000À¸·Î ³ª´« ³ª¸ÓÁö
+    int top;    // ê°€ì¥ ë†’ì€ ë¸”ë¡ì˜ ë†’ì´
+    int count;    // ë‚¨ì•„ ìˆëŠ” ë¸”ë¡ë“¤ì˜ ê°œìˆ˜ë¥¼ 1,000,000ìœ¼ë¡œ ë‚˜ëˆˆ ë‚˜ë¨¸ì§€
 };
 struct Data {
     int top;

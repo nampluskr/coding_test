@@ -1,12 +1,12 @@
-#if 0
+﻿#if 0
 // STL 1042 ms: Tree (LCA), Partition (Range update + Point query)
 #include <vector>
 #include <unordered_map>
 #include <string>
 using namespace std;
 
-#define NUM_NODES    12'001
-#define NUM_VALUES    1'000'001
+#define NUM_NODES   12001
+#define NUM_VALUES  1000001
 
 struct Node {
     int parent;
