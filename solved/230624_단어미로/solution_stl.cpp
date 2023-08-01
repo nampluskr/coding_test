@@ -1,3 +1,4 @@
+#if 0
 // STL 1742 ms: 
 #include <vector>
 #include <string>
@@ -11,7 +12,7 @@ using namespace std;
 struct Room {
     int mID;
     string word;
-    string dir[3];
+    string dir[3];      // 접두어, 가운데, 접미어
 
     bool operator<(const Room& room) const { return word > room.word; }
 };
@@ -43,11 +44,11 @@ void addRoom(int mID, char mWord[], int mDirLen[])
 
     roomMap[string(mWord)] = mID;
 
-    dirMap[0][word.substr(9, 2)].push({ mID, word });
-    dirMap[0][word.substr(7, 4)].push({ mID, word });
-    dirMap[1][word.substr(4, 3)].push({ mID, word });
-    dirMap[2][word.substr(0, 2)].push({ mID, word });
-    dirMap[2][word.substr(0, 4)].push({ mID, word });
+    dirMap[0][word.substr(9, 2)].push({ mID, word });   // 접미어 -> 앞 방향
+    dirMap[0][word.substr(7, 4)].push({ mID, word });   // 접미어 -> 앞 방향
+    dirMap[1][word.substr(4, 3)].push({ mID, word });   // 가운데 -> 중간 방향
+    dirMap[2][word.substr(0, 2)].push({ mID, word });   // 접두어 -> 뒤 방향
+    dirMap[2][word.substr(0, 4)].push({ mID, word });   // 접두어 -> 뒤 방향
 }
 
 // 500
@@ -87,3 +88,4 @@ void changeWord(char mWord[], char mChgWord[], int mChgLen[])
     int mID = roomMap[string(mWord)];
     addRoom(mID, mChgWord, mChgLen);
 }
+#endif
