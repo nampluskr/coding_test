@@ -9,7 +9,7 @@
 
 ## 문자열 해시 / 부분탐색 / 우선순위큐
 
-- [ ] 230624_단어미로
+- [x] [230624_단어미로](https://github.com/nampluskr/coding_test/tree/main/solved/230624_%EB%8B%A8%EC%96%B4%EB%AF%B8%EB%A1%9C)
 - [ ] 230526_단어게임
 - [ ] 230310_검색엔진2
 
