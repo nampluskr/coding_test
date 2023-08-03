@@ -134,8 +134,8 @@ int dijkstra(int start, int brand, int visited) {
         }
         if (dist[node.x] < node.dist) continue;
 
-        for (auto _next = graph[node.x].head; _next; _next = _next->next) {
-            auto next = _next->value;
+        for (auto ptr = graph[node.x].head; ptr; ptr = ptr->next) {
+            auto next = ptr->value;
             if (dist[next.x] > next.dist + node.dist) {
                 dist[next.x] = next.dist + node.dist;
                 Q.push({ next.x, dist[next.x] });
