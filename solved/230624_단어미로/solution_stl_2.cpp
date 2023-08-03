@@ -1,4 +1,4 @@
-﻿#if 1
+﻿#if 0
 // 우선순위큐 데이터 최소화: Room -> Data
 // 문자열 비교 -> 문자 배열 strcpy(), strcmp(): 680 ms
 #define _CRT_SECURE_NO_WARNINGS

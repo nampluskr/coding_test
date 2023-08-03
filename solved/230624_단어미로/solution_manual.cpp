@@ -1,5 +1,5 @@
-#if 0
-// Manual xxx ms: 
+#if 1
+// Manual 769 ms: 
 // vector clear(), resize() -> 배열 / 초기화
 // vector -> Linked List
 // 문자열 비교: strcpy(), strcmp()
