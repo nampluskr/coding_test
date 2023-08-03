@@ -1,5 +1,5 @@
 ﻿#if 1
-// Manual 467 ms
+// Manual 497 ms
 // 1.Array + 2.Linked List
 #define NUM_PLAYERS 100001
 
