@@ -18,9 +18,14 @@
 - [ ] 230722_전자게시판
 - [ ] 210305_온라인서점
 
+## 링크드 리스트
+
+- [x] [221119_조별경기](https://github.com/nampluskr/coding_test/tree/main/solved/221119_%EC%A1%B0%EB%B3%84%EA%B2%BD%EA%B8%B0)
+- [x] [230617_호텔검색](https://github.com/nampluskr/coding_test/tree/main/solved/230617_%ED%98%B8%ED%85%94%EA%B2%80%EC%83%89)
+
 ## 그래프 (Dijkstra)
 
-- [x] 230617_호텔검색
+- [x] [230617_호텔검색](https://github.com/nampluskr/coding_test/tree/main/solved/230617_%ED%98%B8%ED%85%94%EA%B2%80%EC%83%89)
 - [ ] 221209_항공노선관리
 - [ ] 221001_물류허브
 - [ ] 211218_P2P_네트워크
