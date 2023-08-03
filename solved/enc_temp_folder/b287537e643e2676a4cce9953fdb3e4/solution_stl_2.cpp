@@ -114,8 +114,7 @@ void Comment::del() {
 void Message::del() {
     if (state != DELETED) {
         state = DELETED;
-        //sum_points -= point;
-        sum_points = 0;
+        sum_points -= point;
         users[uIdx].sum_points -= point;
 
         for (int cIdx : commentList) { comments[cIdx].del(); }
