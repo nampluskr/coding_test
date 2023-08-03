@@ -1,5 +1,5 @@
 #if 1
-// STL 18837 ms: 함수 호출시 마다 힙정렬
+// (미해결) STL xxx ms: 데이터 추가 삭제시 우큐에 저장
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <vector>
@@ -98,15 +98,15 @@ priority_queue<MessageData> messagePQ;
 void Reply::del() {
     if (state != DELETED) {
         state = DELETED;
-        messages[mIdx].sum_points -= point;
         users[uIdx].sum_points -= point;
+        if (messages[mIdx].state != DELETED) { messages[mIdx].sum_points -= point; }
     }
 }
 void Comment::del() {
     if (state != DELETED) {
         state = DELETED;
-        messages[mIdx].sum_points -= point;
         users[uIdx].sum_points -= point;
+        if (messages[mIdx].state != DELETED) { messages[mIdx].sum_points -= point; }
 
         for (int rIdx : replyList) { replies[rIdx].del(); }
     }
@@ -114,9 +114,8 @@ void Comment::del() {
 void Message::del() {
     if (state != DELETED) {
         state = DELETED;
-        //sum_points -= point;
-        sum_points = 0;
         users[uIdx].sum_points -= point;
+        //sum_points -= point;
 
         for (int cIdx : commentList) { comments[cIdx].del(); }
     }
@@ -248,7 +247,7 @@ int erase(int mID)
         messages[mIdx].del();
 
         users[messages[mIdx].uIdx].update();
-        messages[mIdx].update();
+        //messages[mIdx].update();
 
         ret = users[messages[mIdx].uIdx].sum_points;
     }

@@ -1,5 +1,5 @@
 #if 0
-// STL 18837 ms: 함수 호출시 마다 힙정렬
+// STL 19608 ms: 함수 호출시 마다 힙정렬
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <vector>

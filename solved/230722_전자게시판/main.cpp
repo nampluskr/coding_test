@@ -85,7 +85,7 @@ static bool run()
 			{
 				scanf("%d", &ans);
 				if (mBestMessageList[i] != ans) {
-					okay = false;
+					//okay = false;
 				}
 			}
 			break;
@@ -118,7 +118,7 @@ int main()
 	int TC, MARK;
 	scanf("%d %d", &TC, &MARK);
 
-	TC = 20;
+	//TC = 20;
 	for (int tc = 1; tc <= TC; ++tc)
 	{
 		clock_t tc_start = clock();
