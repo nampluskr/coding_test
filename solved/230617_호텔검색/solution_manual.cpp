@@ -10,9 +10,10 @@
 #define NUM_HOTELS  5000
 #define NUM_BRANDS  50
 
+template<typename Type>
 struct LinkedList {
     struct Node {
-        int value;
+        Type data;
         Node* next;
     };
     Node* head;
@@ -20,8 +21,8 @@ struct LinkedList {
     int size;
 
     void clear() { head = nullptr; tail = nullptr; size = 0; };
-    void push_back(int value) {
-        Node* node = new Node({ value, nullptr });
+    void push_back(const Type& data) {
+        Node* node = new Node({ data, nullptr });
         if (head == nullptr) { head = node; tail = node; }
         else { tail->next = node; tail = node; }
         size += 1;
@@ -34,7 +35,7 @@ struct Hotel {
 Hotel hotels[NUM_HOTELS];
 
 struct Brand {
-    LinkedList hotelList;
+    LinkedList<int> hotelList;
 };
 Brand brands[NUM_BRANDS];
 
@@ -43,22 +44,7 @@ struct Data {
     int dist;
     bool operator<(const Data& data) const { return dist > data.dist; }
 };
-struct LinkedListData {
-    struct Node {
-        Data value;
-        Node* next;
-    };
-    Node* head;
-    Node* tail;
-
-    void clear() { head = nullptr; tail = nullptr; };
-    void push_back(const Data& value) {
-        Node* node = new Node({ value, nullptr });
-        if (head == nullptr) { head = node; tail = node; }
-        else { tail->next = node; tail = node; }
-    }
-};
-LinkedListData graph[NUM_HOTELS];
+LinkedList<Data> graph[NUM_HOTELS];
 int dist[NUM_HOTELS];            // dist[x] start ~ x 까지 거리
 
 #if 0
@@ -73,18 +59,19 @@ struct PriorityQueue {
     bool empty() { return heap.empty(); }
 };
 #else
+template<typename Type>
 struct PriorityQueue {
-    Data heap[NUM_HOTELS];
+    Type heap[NUM_HOTELS];
     int heapSize = 0;
 
     void init() { heapSize = 0; }
-    void push(const Data& data) {
+    void push(const Type& data) {
         heap[heapSize] = data;
         int current = heapSize;
 
         while (current > 0 && heap[(current - 1) / 2] < heap[current])
         {
-            Data temp = heap[(current - 1) / 2];
+            Type temp = heap[(current - 1) / 2];
             heap[(current - 1) / 2] = heap[current];
             heap[current] = temp;
             current = (current - 1) / 2;
@@ -108,13 +95,13 @@ struct PriorityQueue {
             if (heap[current] < heap[child]) {
                 break;
             }
-            Data temp = heap[current];
+            Type temp = heap[current];
             heap[current] = heap[child];
             heap[child] = temp;
             current = child;
         }
     }
-    Data top() { return heap[0]; }
+    Type top() { return heap[0]; }
     bool empty() { return heapSize == 0; }
 };
 
@@ -122,7 +109,7 @@ struct PriorityQueue {
 
 ///////////////////////////////////////////////////////////////////////////////
 int dijkstra(int start, int brand, int visited) {
-    PriorityQueue Q;
+    PriorityQueue<Data> Q;
     for (int i = 0; i < NUM_HOTELS; i++) { dist[i] = INF; }
 
     Q.push({ start, 0 });
@@ -135,7 +122,7 @@ int dijkstra(int start, int brand, int visited) {
         if (dist[node.x] < node.dist) continue;
 
         for (auto ptr = graph[node.x].head; ptr; ptr = ptr->next) {
-            auto next = ptr->value;
+            auto next = ptr->data;
             if (dist[next.x] > next.dist + node.dist) {
                 dist[next.x] = next.dist + node.dist;
                 Q.push({ next.x, dist[next.x] });
@@ -177,7 +164,7 @@ int merge(int mHotelA, int mHotelB)
 
     if (brandA != brandB) {
         for (auto node = brands[brandB].hotelList.head; node; node = node->next) {
-            auto hotelB = node->value;
+            auto hotelB = node->data;
             hotels[hotelB].brand = brandA;
             brands[brandA].hotelList.push_back(hotelB);
         }
