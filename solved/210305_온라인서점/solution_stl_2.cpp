@@ -5,7 +5,7 @@
 using namespace std;
 
 #define NUM_BOOKS		(100000 + 1)
-#define NUM_AUTHORS	(10000 + 1)
+#define NUM_AUTHORS		(10000 + 1)
 #define NUM_CATEGORIES	(20 + 1)
 #define DELETED 1
 

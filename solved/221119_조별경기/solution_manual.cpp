@@ -5,7 +5,7 @@
 
 void swap(int& a, int& b) { int temp = a; a = b; b = temp; }
 
-template <typename Type>
+template<typename Type>
 struct LinkedList {
     struct Node {
         Type data;
