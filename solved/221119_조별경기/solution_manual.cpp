@@ -1,13 +1,14 @@
 ﻿#if 1
-// Manual 497 ms
+// Manual 471 ms
 // 1.Array + 2.Linked List
 #define NUM_PLAYERS 100001
 
 void swap(int& a, int& b) { int temp = a; a = b; b = temp; }
 
+template <typename Type>
 struct LinkedList {
     struct Node {
-        int value;
+        Type data;
         Node* next;
     };
     Node* head;
@@ -15,10 +16,10 @@ struct LinkedList {
     int size;
 
     void clear() { head = nullptr; tail = nullptr; size = 0; }
-    void push_back(int value) {
-        Node* node = new Node({ value, nullptr });
-        if (head == nullptr) { head = node; tail = node; }
-        else { tail->next = node;  tail = node; }
+    void push_back(const Type& data) {
+        Node* ptr = new Node({ data, nullptr });
+        if (head == nullptr) { head = ptr; tail = ptr; }
+        else { tail->next = ptr;  tail = ptr; }
         size += 1;
     }
 };
@@ -30,7 +31,7 @@ struct Player {
 
 struct Team {
     int score;
-    LinkedList playerList;
+    LinkedList<int> playerList;
 };
 
 Player players[NUM_PLAYERS];
@@ -71,13 +72,13 @@ void unionTeam(int mPlayerA, int mPlayerB)
     if (teams[teamA].playerList.size < teams[teamB].playerList.size) {
         swap(teamA, teamB);
     }
-    for (auto node = teams[teamB].playerList.head; node; node = node->next) {
-        int playerB = node->value;
+    for (auto ptr = teams[teamB].playerList.head; ptr; ptr = ptr->next) {
+        int playerB = ptr->data;
         players[playerB].score += teams[teamB].score - teams[teamA].score;
         players[playerB].teamIdx = teamA;
         teams[teamA].playerList.push_back(playerB);
     }
-    teams[teamB].playerList.clear();
+    //teams[teamB].playerList.clear();
 }
 
 int getScore(int mID)
