@@ -9,9 +9,10 @@ struct Node{
     int mId;
     int num;
     int parent;
+    int state;
+
     int num_children;
     vector<int> childList;
-    int state;
 };
 unordered_map<int, int> nodeMap;
 vector<Node>nodes;
@@ -41,11 +42,11 @@ void update_parents(int nIdx, int mNum) {
     }
 }
 // dfs
-void delete_children(int x) {
+void remove_children(int x) {
     nodes[x].state = DELETED;
-    for (int nx: nodes[x].childList)
-        if (nodes[nx].state != DELETED) {
-            delete_children(nx);
+    for (int child: nodes[x].childList)
+        if (nodes[child].state != DELETED) {
+            remove_children(child);
         }
 }
 //////////////////////////////////////////////////////////////////////////////
@@ -57,43 +58,42 @@ void init(int mId, int mNum)
 
     int nIdx = get_nodeIndex(mId);
     nodes[nIdx].mId = mId;
-    nodes[nIdx].num += mNum;
+    nodes[nIdx].num = mNum;
     nodes[nIdx].parent = -1;
 }
 
-int add(int mId, int mNum, int mParent) {
-    int ret;
-    int pIdx = get_nodeIndex(mParent);
+int add(int mId, int mNum, int mParent)
+{
+    int ret = -1;
     int nIdx = get_nodeIndex(mId);
+    int pIdx = get_nodeIndex(mParent);
 
     if (nodes[pIdx].num_children < 2) {
         nodes[pIdx].num_children += 1;
         nodes[pIdx].childList.push_back(nIdx);
 
         nodes[nIdx].mId = mId;
-        nodes[nIdx].num += mNum;
+        nodes[nIdx].num = mNum;
         nodes[nIdx].parent = pIdx;
 
         update_parents(nIdx, mNum);
         ret = nodes[pIdx].num;
     }
-    else {
-        nodes[nIdx].state = DELETED;
-        ret = -1;
-    }
+    else { nodes[nIdx].state = DELETED; }
     return ret;
 }
 
 // 1,000
-int remove(int mId) {
+int remove(int mId)
+{
     int ret = -1;
-    int mIdx = get_nodeIndex(mId);
+    int nIdx = get_nodeIndex(mId);
 
-    if (mIdx != -1) {
-        delete_children(mIdx);
-        update_parents(mIdx, -nodes[mIdx].num);
-        nodes[nodes[mIdx].parent].num_children -= 1;
-        ret = nodes[mIdx].num;
+    if (nIdx != -1) {
+        remove_children(nIdx);
+        update_parents(nIdx, -nodes[nIdx].num);
+        nodes[nodes[nIdx].parent].num_children -= 1;
+        ret = nodes[nIdx].num;
     }
     return ret;
 }

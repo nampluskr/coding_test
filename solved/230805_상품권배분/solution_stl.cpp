@@ -59,7 +59,7 @@ void init(int N, int mId[], int mNum[])
     for (int i = 0; i < N; i++) {
         int nIdx = get_nodeIndex(mId[i]);
         nodes[nIdx].mId = mId[i];
-        nodes[nIdx].num += mNum[i];
+        nodes[nIdx].num = mNum[i];
         nodes[nIdx].parent = -1;
     }
 }
@@ -76,7 +76,7 @@ int add(int mId, int mNum, int mParent)
         nodes[pIdx].childList.push_back(nIdx);
 
         nodes[nIdx].mId = mId;
-        nodes[nIdx].num += mNum;
+        nodes[nIdx].num = mNum;
         nodes[nIdx].parent = pIdx;
 
         update_parents(nIdx, mNum);
