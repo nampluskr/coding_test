@@ -1,4 +1,4 @@
-#if 1
+ï»¿#if 1
 #include <vector>
 #include <unordered_map>
 using namespace std;
@@ -6,8 +6,8 @@ using namespace std;
 #define NUM_NODES   (17000 + 1000)
 #define DELETED     1
 
-// 1 ¡Â mId ¡Â 1,000,000,000
-// N: ±×·ìÀÇ °³¼ö ( 3 ¡Â N ¡Â 1,000 )
+// 1 â‰¤ mId â‰¤ 1,000,000,000
+// N: ê·¸ë£¹ì˜ ê°œìˆ˜ ( 3 â‰¤ N â‰¤ 1,000 )
 struct Node {
     int mId;
     int num;
