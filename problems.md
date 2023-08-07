@@ -39,5 +39,5 @@
 ## 트리 (LCA, BFS)
 
 - [x] [230520_미생물가계도](https://github.com/nampluskr/sw_pro/tree/main/solved/230520_%EB%AF%B8%EC%83%9D%EB%AC%BC%EA%B0%80%EA%B3%84%EB%8F%84) : STL 1042 ms / Manual 885 ms 
-- [x] 230324_계통
-- [x] 230211_우산창고
+- [x] [230324_계통](https://github.com/nampluskr/coding_test/tree/main/solved/230324_%EA%B3%84%ED%86%B5)
+- [x] [230211_우산창고](https://github.com/nampluskr/coding_test/tree/main/solved/230211_%EC%9A%B0%EC%82%B0%EC%B0%BD%EA%B3%A0)
