@@ -23,13 +23,13 @@
 - [x] [221119_조별경기](https://github.com/nampluskr/coding_test/tree/main/solved/221119_%EC%A1%B0%EB%B3%84%EA%B2%BD%EA%B8%B0) : STL 467 ms / Manual 497 ms
 - [x] [230617_호텔검색](https://github.com/nampluskr/coding_test/tree/main/solved/230617_%ED%98%B8%ED%85%94%EA%B2%80%EC%83%89) : STL 553 ms / Manual 410 ms
 
-## 트리 / 노드 추가 / 노드 삭제 / 하위 노드합 업데이트
+## 트리 (노드 추가/삭제, 하위 노드합 업데이트)
 
 - [ ] 230805_상품권배분
 - [ ] 230722_전자게시판
 - [ ] 230707_조직개편
 
-## 그래프 (Dijkstra)
+## 가중치 그래프 (네트워크, Dijkstra)
 
 - [x] [230617_호텔검색](https://github.com/nampluskr/coding_test/tree/main/solved/230617_%ED%98%B8%ED%85%94%EA%B2%80%EC%83%89) : STL 553 ms / Manual 410 ms
 - [ ] 221209_항공노선관리
