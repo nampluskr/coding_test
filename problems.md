@@ -25,9 +25,9 @@
 
 ## 트리 (노드 추가/삭제, 하위 노드합 업데이트)
 
-- [ ] 230805_상품권배분
-- [ ] 230722_전자게시판
-- [ ] 230707_조직개편
+- [ ] [230805_상품권배분](https://github.com/nampluskr/coding_test/tree/main/solved/230805_%EC%83%81%ED%92%88%EA%B6%8C%EB%B0%B0%EB%B6%84)
+- [ ] [230722_전자게시판](https://github.com/nampluskr/coding_test/tree/main/solved/230722_%EC%A0%84%EC%9E%90%EA%B2%8C%EC%8B%9C%ED%8C%90)
+- [ ] [230707_조직개편](https://github.com/nampluskr/coding_test/tree/main/solved/230707_%EC%A1%B0%EC%A7%81%EA%B0%9C%ED%8E%B8)
 
 ## 가중치 그래프 (네트워크, Dijkstra)
 
