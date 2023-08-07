@@ -15,7 +15,7 @@
 
 ## DB관리 / 부분탐색 / 우선순위 큐
 
-- [ ] [230722_전자게시판](https://github.com/nampluskr/coding_test/tree/main/solved/230722_%EC%A0%84%EC%9E%90%EA%B2%8C%EC%8B%9C%ED%8C%90) : STL 19608 ms / Manual 미해결
+- [ ] [230722_전자게시판](https://github.com/nampluskr/coding_test/tree/main/solved/230722_%EC%A0%84%EC%9E%90%EA%B2%8C%EC%8B%9C%ED%8C%90) : STL 19608 ms (호출후 우큐 정렬) / STL (호출전 우큐 정렬 ) 507 ms / Manual 472 ms
 - [x] [210305_온라인서점](https://github.com/nampluskr/coding_test/tree/main/solved/210305_%EC%98%A8%EB%9D%BC%EC%9D%B8%EC%84%9C%EC%A0%90) (TC = 5): STL 2266 ms (힙정렬) / 38 ms (미리 우큐 저장) / Manual 46 ms
 
 ## 링크드 리스트

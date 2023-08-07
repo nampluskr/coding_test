@@ -85,7 +85,7 @@ static bool run()
 			{
 				scanf("%d", &ans);
 				if (mBestMessageList[i] != ans) {
-					//okay = false;
+					okay = false;
 				}
 			}
 			break;

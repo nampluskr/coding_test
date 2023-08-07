@@ -1,8 +1,8 @@
-ï»¿#if 0
-// STL 507 ms
+#if 1
+// Manual 472 ms (Array + LinkedList)
 #define _CRT_SECURE_NO_WARNINGS
 
-#include <vector>
+//#include <vector>
 #include <string>
 #include <unordered_map>
 #include <queue>
@@ -13,13 +13,29 @@ using namespace std;
 #define NUM_MESSAGES	(50000)
 #define DELETED		1
 
+template<typename Type>
+struct LinkedList {
+    struct Node {
+        Type data;
+        Node* next;
+    };
+    Node* head = nullptr;
+    Node* tail = nullptr;
+
+    void init() { head = nullptr; tail = nullptr; }
+    void push_back(const Type& data) {
+        Node* node = new Node({ data, nullptr });
+        if (head == nullptr) { head = node; tail = node; }
+        else { tail->next = node; tail = node; }
+    }
+};
+
 struct User {
     char name[MAXL + 1];
     int total;
-    //vector<int> messageList;
 };
 unordered_map<string, int> userMap;
-vector<User> users;
+User users[NUM_USERS];
 int userCnt;
 
 struct Message {
@@ -31,10 +47,10 @@ struct Message {
     int state;
 
     int parent;
-    vector<int> childList;
+    LinkedList<int> childList;
 };
 unordered_map<int, int> messageMap;
-vector<Message> messages;
+Message messages[NUM_MESSAGES];
 int messageCnt;
 
 struct UserData {
@@ -56,8 +72,68 @@ struct MessageData {
     }
 };
 
-priority_queue<UserData> userPQ;
-priority_queue<MessageData> messagePQ;
+#if 1
+template<typename Type>
+struct PriorityQueue {
+    priority_queue<Type> heap;
+
+    void init() { while (!heap.empty()) { heap.pop(); } }
+    void push(const Type& data) { heap.push(data); }
+    void pop() { heap.pop(); }
+    Type top() { return heap.top(); }
+    bool empty() { return heap.empty(); }
+};
+#else
+template<typename Type>
+struct PriorityQueue {
+    Type heap[NUM_USERS + NUM_MESSAGES];
+    int heapSize = 0;
+
+    void init() { heapSize = 0; }
+    void push(const Type& data) {
+        heap[heapSize] = data;
+        int current = heapSize;
+
+        while (current > 0 && heap[(current - 1) / 2] < heap[current])
+        {
+            Type temp = heap[(current - 1) / 2];
+            heap[(current - 1) / 2] = heap[current];
+            heap[current] = temp;
+            current = (current - 1) / 2;
+        }
+        heapSize = heapSize + 1;
+    }
+    void pop() {
+        heapSize = heapSize - 1;
+        heap[0] = heap[heapSize];
+        int current = 0;
+
+        while (current * 2 + 1 < heapSize)
+        {
+            int child;
+            if (current * 2 + 2 == heapSize) {
+                child = current * 2 + 1;
+            }
+            else {
+                child = heap[current * 2 + 2] < heap[current * 2 + 1] ? current * 2 + 1 : current * 2 + 2;
+            }
+            if (heap[child] < heap[current]) {
+                break;
+            }
+            Type temp = heap[current];
+            heap[current] = heap[child];
+            heap[child] = temp;
+            current = child;
+        }
+    }
+    Type top() { return heap[0]; }
+    bool empty() { return heapSize == 0; }
+};
+#endif
+
+PriorityQueue<UserData> userPQ;
+PriorityQueue<MessageData> messagePQ;
+
 
 //////////////////////////////////////////////////////////////////////////////
 int get_userIndex(char mUser[]) {
@@ -93,29 +169,29 @@ void erase_messages(int mIdx) {
 
     userPQ.push({ users[uIdx].name, users[uIdx].total });
     messagePQ.push({ messages[rIdx].mID, messages[rIdx].total });
-    //if (messages[rIdx].state != DELETED) {
-    //    messagePQ.push({ messages[rIdx].mID, messages[rIdx].total });
-    //}
 
-    for (int child : messages[mIdx].childList)
+    //for (int child : messages[mIdx].childList)
+    for (auto ptr = messages[mIdx].childList.head; ptr; ptr = ptr->next) {
+        auto child = ptr->data;
         if (messages[child].state != DELETED) {
             erase_messages(child);
         }
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void init()
 {
     userMap.clear();
-    users.clear();	users.resize(NUM_USERS);
+    for (int i = 0; i < NUM_USERS; i++) { users[i] = {}; }
     userCnt = 0;
 
     messageMap.clear();
-    messages.clear();	messages.resize(NUM_MESSAGES);
+    for (int i = 0; i < NUM_MESSAGES; i++) { messages[i] = {}; }
     messageCnt = 0;
 
-    while (!userPQ.empty()) { userPQ.pop(); }
-    while (!messagePQ.empty()) { messagePQ.pop(); }
+    userPQ.init();
+    messagePQ.init();
 }
 
 int writeMessage(char mUser[], int mID, int mPoint)
@@ -126,7 +202,6 @@ int writeMessage(char mUser[], int mID, int mPoint)
     // update user
     strcpy(users[uIdx].name, mUser);
     users[uIdx].total += mPoint;
-    //users[uIdx].messageList.push_back(mIdx);
 
     // update message (root)
     messages[mIdx].mID = mID;
@@ -190,11 +265,10 @@ int erase(int mID)
     return ret;
 }
 
-#if 1
 void getBestMessages(int mBestMessageList[])
 {
     auto& Q = messagePQ;
-    vector<int> popped;
+    LinkedList<int> popped;
     int cnt = 0;
 
     while (!Q.empty() && cnt < 5) {
@@ -204,22 +278,23 @@ void getBestMessages(int mBestMessageList[])
         if (messages[mIdx].total != msg.total) continue;
         if (messages[mIdx].state == DELETED) continue;
 
-        // ì¤‘ë³µ ì œê±°
+        // Áßº¹ Á¦°Å
         if (!Q.empty() && msg.mID == Q.top().mID && msg.total == Q.top().total) continue;
 
         popped.push_back(mIdx);
         mBestMessageList[cnt] = msg.mID;
         cnt += 1;
     }
-    for (int _mIdx : popped) {
-        Q.push({ messages[_mIdx].mID, messages[_mIdx].total });
+    for (auto ptr = popped.head; ptr; ptr=ptr->next) {
+        auto mIdx = ptr->data;
+        Q.push({ messages[mIdx].mID, messages[mIdx].total });
     }
 }
 
 void getBestUsers(char mBestUserList[][MAXL + 1])
 {
     auto& Q = userPQ;
-    vector<int> popped;
+    LinkedList<int> popped;
     int cnt = 0;
 
     while (!Q.empty() && cnt < 5) {
@@ -228,42 +303,16 @@ void getBestUsers(char mBestUserList[][MAXL + 1])
 
         if (users[uIdx].total != user.total) continue;
 
-        //ì¤‘ë³µ ì œê±°
+        //Áßº¹ Á¦°Å
         if (!Q.empty() && strcmp(user.name, Q.top().name) == 0 && user.total == Q.top().total) continue;
 
         popped.push_back(uIdx);
         strcpy(mBestUserList[cnt], user.name);
         cnt += 1;
     }
-    for (int uIdx : popped) {
+    for (auto ptr = popped.head; ptr; ptr=ptr->next) {
+        auto uIdx = ptr->data;
         Q.push({ users[uIdx].name, users[uIdx].total });
     }
 }
-#else
-void getBestMessages(int mBestMessageList[])
-{
-    vector<MessageData> ret;
-    for (int i = 0; i < userCnt; i++)
-        for (int mIdx : users[i].messageList)
-            if (messages[mIdx].state != DELETED) {
-                ret.push_back({ messages[mIdx].mID, messages[mIdx].total });
-            }
-    sort(ret.rbegin(), ret.rend());
-    for (int i = 0; i < 5; i++) {
-        mBestMessageList[i] = ret[i].mID;
-    }
-}
-
-void getBestUsers(char mBestUserList[][MAXL + 1])
-{
-    vector<UserData> ret;
-    for (int i = 0; i < userCnt; i++) {
-        ret.push_back({ users[i].name, users[i].total });
-    }
-    sort(ret.rbegin(), ret.rend());
-    for (int i = 0; i < 5; i++) {
-        strcpy(mBestUserList[i], ret[i].name);
-    }
-}
-#endif
 #endif
