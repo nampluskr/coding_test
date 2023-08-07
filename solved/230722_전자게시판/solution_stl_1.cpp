@@ -1,5 +1,5 @@
 #if 0
-// (미해결) STL xxx ms: 데이터 추가 삭제시 우큐에 저장
+// STL 19608 ms: 함수 호출시 마다 힙정렬
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <vector>
@@ -24,9 +24,7 @@ using namespace std;
 struct User {
     char name[MAXL + 1];
     int sum_points;
-    //vector<int> messageList;
-
-    void update();
+    vector<int> messageList;
 };
 struct Message {
     int mID;
@@ -38,7 +36,6 @@ struct Message {
     int state;
 
     void del();
-    void update();
 };
 struct Comment {
     int type;
@@ -70,6 +67,32 @@ vector<Comment> comments;
 vector<Reply> replies;
 int messageCnt;
 
+void Reply::del() {
+    if (state != DELETED) {
+        state = DELETED;
+        messages[mIdx].sum_points -= point;
+        users[uIdx].sum_points -= point;
+    }
+}
+void Comment::del() {
+    if (state != DELETED) {
+        state = DELETED;
+        messages[mIdx].sum_points -= point;
+        users[uIdx].sum_points -= point;
+
+        for (int rIdx : replyList) { replies[rIdx].del(); }
+    }
+}
+void Message::del() {
+    if (state != DELETED) {
+        state = DELETED;
+        sum_points -= point;
+        users[uIdx].sum_points -= point;
+
+        for (int cIdx : commentList) { comments[cIdx].del(); }
+    }
+}
+
 struct UserData {
     char name[MAXL + 1];
     int sum_points;
@@ -91,38 +114,6 @@ struct MessageData {
             (sum_points == message.sum_points && mID > message.mID);
     }
 };
-
-priority_queue<UserData> userPQ;
-priority_queue<MessageData> messagePQ;
-
-void Reply::del() {
-    if (state != DELETED) {
-        state = DELETED;
-        users[uIdx].sum_points -= point;
-        if (messages[mIdx].state != DELETED) { messages[mIdx].sum_points -= point; }
-    }
-}
-void Comment::del() {
-    if (state != DELETED) {
-        state = DELETED;
-        users[uIdx].sum_points -= point;
-        if (messages[mIdx].state != DELETED) { messages[mIdx].sum_points -= point; }
-
-        for (int rIdx : replyList) { replies[rIdx].del(); }
-    }
-}
-void Message::del() {
-    if (state != DELETED) {
-        state = DELETED;
-        users[uIdx].sum_points -= point;
-        //sum_points -= point;
-
-        for (int cIdx : commentList) { comments[cIdx].del(); }
-    }
-}
-
-void User::update() { userPQ.push({ name, sum_points }); }
-void Message::update() { messagePQ.push({ mID, sum_points}); }
 
 ///////////////////////////////////////////////////////////////////////////////////
 int get_userIndex(char mUser[]) {
@@ -161,9 +152,6 @@ void init()
     comments.clear();   comments.resize(NUM_MESSAGES);
     replies.clear();    replies.resize(NUM_MESSAGES);
     messageCnt = 0;
-
-    while (!userPQ.empty()) { userPQ.pop(); }
-    while (!messagePQ.empty()) { messagePQ.pop(); }
 }
 
 // 새 글이 등록된 후 사용자 mUser의 총합 포인트
@@ -176,7 +164,7 @@ int writeMessage(char mUser[], int mID, int mPoint)
     // Update user
     //strcpy(users[uIdx].name, mUser);
     users[uIdx].sum_points += mPoint;
-    //users[uIdx].messageList.push_back(mIdx);
+    users[uIdx].messageList.push_back(mIdx);
 
     // Add message
     messages[mIdx].mID = mID;
@@ -184,10 +172,6 @@ int writeMessage(char mUser[], int mID, int mPoint)
     messages[mIdx].point = mPoint;
     messages[mIdx].sum_points += mPoint;
     messages[mIdx].uIdx = uIdx;
-
-    // update userPQ, messagePQ
-    users[uIdx].update();
-    messages[mIdx].update();
 
     ret = users[uIdx].sum_points;
     return ret;
@@ -212,9 +196,6 @@ int commentTo(char mUser[], int mID, int mTargetID, int mPoint)
         messages[targetIdx].commentList.push_back(mIdx);
         users[uIdx].sum_points += mPoint;
 
-        users[uIdx].update();
-        messages[comments[mIdx].mIdx].update();
-
         ret = messages[comments[mIdx].mIdx].sum_points;
     }
     // Add reply to comment
@@ -227,9 +208,6 @@ int commentTo(char mUser[], int mID, int mTargetID, int mPoint)
         comments[targetIdx].replyList.push_back(mIdx);
         messages[replies[mIdx].mIdx].sum_points += mPoint;
         users[uIdx].sum_points += mPoint;
-
-        users[uIdx].update();
-        messages[replies[mIdx].mIdx].update();
 
         ret = messages[replies[mIdx].mIdx].sum_points;
     }
@@ -245,28 +223,16 @@ int erase(int mID)
     // Erase message
     if (messages[mIdx].type == MESSAGE) {
         messages[mIdx].del();
-
-        users[messages[mIdx].uIdx].update();
-        //messages[mIdx].update();
-
         ret = users[messages[mIdx].uIdx].sum_points;
     }
     // Erase comment
     else if (comments[mIdx].type == COMMENT) {
         comments[mIdx].del();
-
-        users[comments[mIdx].uIdx].update();
-        messages[comments[mIdx].mIdx].update();
-
         ret = messages[comments[mIdx].mIdx].sum_points;
     }
     // Erase reply
     else if (replies[mIdx].type == REPLY) {
         replies[mIdx].del();
-
-        users[replies[mIdx].uIdx].update();
-        messages[replies[mIdx].mIdx].update();
-
         ret = messages[replies[mIdx].mIdx].sum_points;
     }
     return ret;
@@ -276,48 +242,41 @@ int erase(int mID)
 // 만약 총합 포인트가 같은 경우 ID가 더 작은 글의 ID가 더 먼저 온다.
 void getBestMessages(int mBestMessageList[])
 {
-    priority_queue<MessageData>& Q = messagePQ;
-    vector<int> ret;
-    vector<int> popped;
+    priority_queue<MessageData> Q;
+    for (int uIdx = 0; uIdx < userCnt; uIdx++)
+        for (int mIdx : users[uIdx].messageList)
+            if (messages[mIdx].state != DELETED) {
+                Q.push({ messages[mIdx].mID, messages[mIdx].sum_points });
+            }
     int cnt = 0;
-
     while (!Q.empty() && cnt < 5) {
         auto message = Q.top(); Q.pop();
         int mIdx = get_messageIndex(message.mID);
 
-        if (messages[mIdx].type != MESSAGE) continue;
         if (messages[mIdx].sum_points != message.sum_points) continue;
 
-        popped.push_back(mIdx);
-        if (messages[mIdx].state != DELETED) {
-            ret.push_back(message.mID);
-            mBestMessageList[cnt] = message.mID;
-            cnt += 1;
-        }
+        mBestMessageList[cnt] = message.mID;
+        cnt += 1;
     }
-    for (int mIdx: popped) { Q.push({ messages[mIdx].mID, messages[mIdx].sum_points }); }
 }
 
 // 총합 포인트가 가장 높은 사용자들의 이름이 저장될 배열
 // 만약 총합 포인트가 같은 경우 이름이 사전 순으로 더 앞선 사용자의 이름이 더 먼저 온다.
 void getBestUsers(char mBestUserList[][MAXL + 1])
 {
-    priority_queue<UserData>& Q = userPQ;
-    vector<string> ret;
-    vector<int> popped;
+    priority_queue<UserData> Q;
+    for (int uIdx = 0; uIdx < userCnt; uIdx++) {
+        Q.push({ users[uIdx].name, users[uIdx].sum_points });
+    }
     int cnt = 0;
-
     while (!Q.empty() && cnt < 5) {
         auto user = Q.top(); Q.pop();
         int uIdx = get_userIndex(user.name);
 
         if (users[uIdx].sum_points != user.sum_points) continue;
 
-        popped.push_back(uIdx);
-        ret.push_back(string(user.name));
         strcpy(mBestUserList[cnt], user.name);
         cnt += 1;
     }
-    for (int uIdx: popped) { Q.push({ users[uIdx].name, users[uIdx].sum_points }); }
 }
 #endif
