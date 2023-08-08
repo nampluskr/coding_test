@@ -7,4 +7,4 @@
 - LCA
 - 백트래킹 - DFS / BFS
 - 다익스트라
-- [이진탐색 - Parametric Search](https://github.com/nampluskr/coding_test/tree/main/ref)
+- [이진탐색 - Parametric Search](https://github.com/nampluskr/coding_test/blob/main/ref/parametric_search.md)
