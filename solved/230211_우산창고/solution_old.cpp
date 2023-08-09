@@ -1,4 +1,5 @@
-// STL 90 ms - ÃÖ½Å Ç®ÀÌ ¹öÁ¯À¸·Î ´Ù½Ã ÀÛ¼ºÇÒ °Í
+#if 0
+// STL 90 ms - ìµœì‹  í’€ì´ ë²„ì ¼ìœ¼ë¡œ ë‹¤ì‹œ ì‘ì„±í•  ê²ƒ
 #include <vector>
 #include <queue>
 
@@ -8,11 +9,11 @@ using namespace std;
 //inline int max(int x, int y) { return x > y ? x : y; }
 
 struct Node {
-    int parent;         // ºÎ¸ğ ³ëµå
-    int depth;          // ·çÆ®·ÎºÎÅÍÀÇ ´©Àû ±íÀÌ
-    int distance;       // ·çÆ®·ÎºÎÅÍÀÇ ´©Àû °Å¸®
-    int quantity;       // ¿ì»ê °³¼ö
-    int sum_quantity;   // ÀÚ½Ä ³ëµå ¿ì»ê °³¼ö ´©Àû (ÀÚ½Å Æ÷ÇÔ)
+    int parent;         // ë¶€ëª¨ ë…¸ë“œ
+    int depth;          // ë£¨íŠ¸ë¡œë¶€í„°ì˜ ëˆ„ì  ê¹Šì´
+    int distance;       // ë£¨íŠ¸ë¡œë¶€í„°ì˜ ëˆ„ì  ê±°ë¦¬
+    int quantity;       // ìš°ì‚° ê°œìˆ˜
+    int sum_quantity;   // ìì‹ ë…¸ë“œ ìš°ì‚° ê°œìˆ˜ ëˆ„ì  (ìì‹  í¬í•¨)
 };
 vector<Node> nodes;
 
@@ -126,3 +127,4 @@ int sum(int mID)
 {
     return nodes[mID].sum_quantity;
 }
+#endif
