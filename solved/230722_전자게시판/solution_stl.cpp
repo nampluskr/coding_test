@@ -1,5 +1,5 @@
-#if 0
-// STL 858 ms (WS)
+#if 1
+// STL 496 ms
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <vector>

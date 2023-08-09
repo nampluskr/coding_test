@@ -1,5 +1,5 @@
-#if 1
-// Manual 713 ms: Array + LinkedList + PriorityQueue
+#if 0
+// Manual 444 ms: Array + LinkedList + PriorityQueue
 #define _CRT_SECURE_NO_WARNINGS
 
 //#include <vector>
