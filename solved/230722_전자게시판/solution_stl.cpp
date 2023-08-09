@@ -1,22 +1,21 @@
-﻿#if 0
-// STL 507 ms
+#if 0
+// STL 858 ms (WS)
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <vector>
+#include <queue>
 #include <string>
 #include <unordered_map>
-#include <queue>
 using namespace std;
 
 #define MAXL			(10)
 #define NUM_USERS		(10000)
 #define NUM_MESSAGES	(50000)
-#define DELETED		1
+#define DELETED		    (1)
 
 struct User {
     char name[MAXL + 1];
     int total;
-    //vector<int> messageList;
 };
 unordered_map<string, int> userMap;
 vector<User> users;
@@ -45,14 +44,19 @@ struct UserData {
     bool operator<(const UserData& user) const {
         return (total < user.total) || (total == user.total && strcmp(name, user.name) > 0);
     }
+    bool operator==(const UserData& user) const {
+        return total == user.total && strcmp(name, user.name) == 0;
+    }
 };
-
 struct MessageData {
     int mID;
     int total;
 
     bool operator<(const MessageData& msg) const {
         return (total < msg.total) || (total == msg.total && mID > msg.mID);
+    }
+    bool operator==(const MessageData& msg) const {
+        return total == msg.total && mID == msg.mID;
     }
 };
 
@@ -93,9 +97,6 @@ void erase_messages(int mIdx) {
 
     userPQ.push({ users[uIdx].name, users[uIdx].total });
     messagePQ.push({ messages[rIdx].mID, messages[rIdx].total });
-    //if (messages[rIdx].state != DELETED) {
-    //    messagePQ.push({ messages[rIdx].mID, messages[rIdx].total });
-    //}
 
     for (int child : messages[mIdx].childList)
         if (messages[child].state != DELETED) {
@@ -126,7 +127,6 @@ int writeMessage(char mUser[], int mID, int mPoint)
     // update user
     strcpy(users[uIdx].name, mUser);
     users[uIdx].total += mPoint;
-    //users[uIdx].messageList.push_back(mIdx);
 
     // update message (root)
     messages[mIdx].mID = mID;
@@ -184,13 +184,12 @@ int erase(int mID)
 
     int rIdx = messages[mIdx].root;
     int uIdx = messages[mIdx].user;
-    if (mIdx == rIdx) { ret = users[uIdx].total; }
-    else { ret = messages[rIdx].total; }
+    if (mIdx == rIdx) { ret = users[uIdx].total; }  // message
+    else { ret = messages[rIdx].total; }            // comment, reply
 
     return ret;
 }
 
-#if 1
 void getBestMessages(int mBestMessageList[])
 {
     auto& Q = messagePQ;
@@ -203,9 +202,7 @@ void getBestMessages(int mBestMessageList[])
 
         if (messages[mIdx].total != msg.total) continue;
         if (messages[mIdx].state == DELETED) continue;
-
-        // 중복 제거
-        if (!Q.empty() && msg.mID == Q.top().mID && msg.total == Q.top().total) continue;
+        if (!Q.empty() && msg == Q.top()) continue;     // 중복 제거
 
         popped.push_back(mIdx);
         mBestMessageList[cnt] = msg.mID;
@@ -227,9 +224,7 @@ void getBestUsers(char mBestUserList[][MAXL + 1])
         int uIdx = get_userIndex(user.name);
 
         if (users[uIdx].total != user.total) continue;
-
-        //중복 제거
-        if (!Q.empty() && strcmp(user.name, Q.top().name) == 0 && user.total == Q.top().total) continue;
+        if (!Q.empty() && user == Q.top()) continue;    // 중복 제거
 
         popped.push_back(uIdx);
         strcpy(mBestUserList[cnt], user.name);
@@ -239,31 +234,4 @@ void getBestUsers(char mBestUserList[][MAXL + 1])
         Q.push({ users[uIdx].name, users[uIdx].total });
     }
 }
-#else
-void getBestMessages(int mBestMessageList[])
-{
-    vector<MessageData> ret;
-    for (int i = 0; i < userCnt; i++)
-        for (int mIdx : users[i].messageList)
-            if (messages[mIdx].state != DELETED) {
-                ret.push_back({ messages[mIdx].mID, messages[mIdx].total });
-            }
-    sort(ret.rbegin(), ret.rend());
-    for (int i = 0; i < 5; i++) {
-        mBestMessageList[i] = ret[i].mID;
-    }
-}
-
-void getBestUsers(char mBestUserList[][MAXL + 1])
-{
-    vector<UserData> ret;
-    for (int i = 0; i < userCnt; i++) {
-        ret.push_back({ users[i].name, users[i].total });
-    }
-    sort(ret.rbegin(), ret.rend());
-    for (int i = 0; i < 5; i++) {
-        strcpy(mBestUserList[i], ret[i].name);
-    }
-}
-#endif
 #endif
