@@ -1,5 +1,5 @@
 #if 1
-// Manual 713 ms (WS): Array + LinkedList + PriorityQueue
+// Manual 713 ms: Array + LinkedList + PriorityQueue
 #define _CRT_SECURE_NO_WARNINGS
 
 //#include <vector>
@@ -11,7 +11,8 @@ using namespace std;
 #define MAXL			(10)
 #define NUM_USERS		(10000)
 #define NUM_MESSAGES	(50000)
-#define DELETED		1
+#define DELETED		    (1)
+
 #define HEAP_SIZE       (50000)
 
 template<typename Type>
@@ -62,6 +63,9 @@ struct UserData {
     bool operator<(const UserData& user) const {
         return (total < user.total) || (total == user.total && strcmp(name, user.name) > 0);
     }
+    bool operator==(const UserData& user) const {
+        return total == user.total && strcmp(name, user.name) == 0;
+    }
 };
 struct MessageData {
     int mID;
@@ -69,6 +73,9 @@ struct MessageData {
 
     bool operator<(const MessageData& msg) const {
         return (total < msg.total) || (total == msg.total && mID > msg.mID);
+    }
+    bool operator==(const MessageData& msg) const {
+        return total == msg.total && mID == msg.mID;
     }
 };
 
@@ -169,9 +176,6 @@ void erase_messages(int mIdx) {
 
     userPQ.push({ users[uIdx].name, users[uIdx].total });
     messagePQ.push({ messages[rIdx].mID, messages[rIdx].total });
-    //if (messages[rIdx].state != DELETED) {
-    //    messagePQ.push({ messages[rIdx].mID, messages[rIdx].total });
-    //}
 
     for (auto ptr = messages[mIdx].childList.head; ptr; ptr=ptr->next) {
         int child = ptr->data;
@@ -262,8 +266,8 @@ int erase(int mID)
 
     int rIdx = messages[mIdx].root;
     int uIdx = messages[mIdx].user;
-    if (mIdx == rIdx) { ret = users[uIdx].total; }
-    else { ret = messages[rIdx].total; }
+    if (mIdx == rIdx) { ret = users[uIdx].total; }  // message
+    else { ret = messages[rIdx].total; }            // comment, reply
 
     return ret;
 }
@@ -280,9 +284,7 @@ void getBestMessages(int mBestMessageList[])
 
         if (messages[mIdx].total != msg.total) continue;
         if (messages[mIdx].state == DELETED) continue;
-
-        // 중복 제거
-        if (!Q.empty() && msg.mID == Q.top().mID && msg.total == Q.top().total) continue;
+        if (!Q.empty() && msg == Q.top()) continue;     // 중복 제거
 
         popped.push_back(mIdx);
         mBestMessageList[cnt] = msg.mID;
@@ -305,9 +307,7 @@ void getBestUsers(char mBestUserList[][MAXL + 1])
         int uIdx = get_userIndex(user.name);
 
         if (users[uIdx].total != user.total) continue;
-
-        //중복 제거
-        if (!Q.empty() && strcmp(user.name, Q.top().name) == 0 && user.total == Q.top().total) continue;
+        if (!Q.empty() && user == Q.top()) continue;    // 중복 제거
 
         popped.push_back(uIdx);
         strcpy(mBestUserList[cnt], user.name);
