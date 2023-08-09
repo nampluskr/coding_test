@@ -1,17 +1,18 @@
 #if 1
-// Manual 472 ms (Array + LinkedList)
+// Manual 713 ms (WS): Array + LinkedList + PriorityQueue
 #define _CRT_SECURE_NO_WARNINGS
 
 //#include <vector>
+//#include <queue>
 #include <string>
 #include <unordered_map>
-#include <queue>
 using namespace std;
 
 #define MAXL			(10)
 #define NUM_USERS		(10000)
 #define NUM_MESSAGES	(50000)
 #define DELETED		1
+#define HEAP_SIZE       (50000)
 
 template<typename Type>
 struct LinkedList {
@@ -22,9 +23,8 @@ struct LinkedList {
     Node* head = nullptr;
     Node* tail = nullptr;
 
-    void init() { head = nullptr; tail = nullptr; }
     void push_back(const Type& data) {
-        Node* node = new Node({ data, nullptr });
+        Node* node = new Node({data, nullptr});
         if (head == nullptr) { head = node; tail = node; }
         else { tail->next = node; tail = node; }
     }
@@ -32,7 +32,7 @@ struct LinkedList {
 
 struct User {
     char name[MAXL + 1];
-    int total;
+    int total = 0;
 };
 unordered_map<string, int> userMap;
 User users[NUM_USERS];
@@ -57,12 +57,12 @@ struct UserData {
     char name[MAXL + 1];
     int total;
 
+    UserData() { strcpy(name, ""); total = 0; }
     UserData(char _name[], int _total) { strcpy(name, _name); total = _total; }
     bool operator<(const UserData& user) const {
         return (total < user.total) || (total == user.total && strcmp(name, user.name) > 0);
     }
 };
-
 struct MessageData {
     int mID;
     int total;
@@ -72,10 +72,11 @@ struct MessageData {
     }
 };
 
-#if 1
+#if 0
 template<typename Type>
 struct PriorityQueue {
     priority_queue<Type> heap;
+    int heapSize = 0;
 
     void init() { while (!heap.empty()) { heap.pop(); } }
     void push(const Type& data) { heap.push(data); }
@@ -86,7 +87,7 @@ struct PriorityQueue {
 #else
 template<typename Type>
 struct PriorityQueue {
-    Type heap[NUM_USERS + NUM_MESSAGES];
+    Type heap[HEAP_SIZE];
     int heapSize = 0;
 
     void init() { heapSize = 0; }
@@ -134,7 +135,6 @@ struct PriorityQueue {
 PriorityQueue<UserData> userPQ;
 PriorityQueue<MessageData> messagePQ;
 
-
 //////////////////////////////////////////////////////////////////////////////
 int get_userIndex(char mUser[]) {
     int uIdx;
@@ -169,10 +169,12 @@ void erase_messages(int mIdx) {
 
     userPQ.push({ users[uIdx].name, users[uIdx].total });
     messagePQ.push({ messages[rIdx].mID, messages[rIdx].total });
+    //if (messages[rIdx].state != DELETED) {
+    //    messagePQ.push({ messages[rIdx].mID, messages[rIdx].total });
+    //}
 
-    //for (int child : messages[mIdx].childList)
-    for (auto ptr = messages[mIdx].childList.head; ptr; ptr = ptr->next) {
-        auto child = ptr->data;
+    for (auto ptr = messages[mIdx].childList.head; ptr; ptr=ptr->next) {
+        int child = ptr->data;
         if (messages[child].state != DELETED) {
             erase_messages(child);
         }
@@ -190,8 +192,10 @@ void init()
     for (int i = 0; i < NUM_MESSAGES; i++) { messages[i] = {}; }
     messageCnt = 0;
 
-    userPQ.init();
-    messagePQ.init();
+    //while (!userPQ.empty()) { userPQ.pop(); }
+    //while (!messagePQ.empty()) { messagePQ.pop(); }
+    userPQ.init();      // set heapSize = 0
+    messagePQ.init();   // set heapSize = 0
 }
 
 int writeMessage(char mUser[], int mID, int mPoint)
@@ -212,7 +216,6 @@ int writeMessage(char mUser[], int mID, int mPoint)
     messages[mIdx].parent = -1;
 
     int ret = users[uIdx].total;
-
     userPQ.push({ users[uIdx].name, users[uIdx].total });
     messagePQ.push({ messages[mIdx].mID, messages[mIdx].total });
 
@@ -278,7 +281,7 @@ void getBestMessages(int mBestMessageList[])
         if (messages[mIdx].total != msg.total) continue;
         if (messages[mIdx].state == DELETED) continue;
 
-        // Áßº¹ Á¦°Å
+        // ì¤‘ë³µ ì œê±°
         if (!Q.empty() && msg.mID == Q.top().mID && msg.total == Q.top().total) continue;
 
         popped.push_back(mIdx);
@@ -286,7 +289,7 @@ void getBestMessages(int mBestMessageList[])
         cnt += 1;
     }
     for (auto ptr = popped.head; ptr; ptr=ptr->next) {
-        auto mIdx = ptr->data;
+        int mIdx = ptr->data;
         Q.push({ messages[mIdx].mID, messages[mIdx].total });
     }
 }
@@ -303,15 +306,15 @@ void getBestUsers(char mBestUserList[][MAXL + 1])
 
         if (users[uIdx].total != user.total) continue;
 
-        //Áßº¹ Á¦°Å
+        //ì¤‘ë³µ ì œê±°
         if (!Q.empty() && strcmp(user.name, Q.top().name) == 0 && user.total == Q.top().total) continue;
 
         popped.push_back(uIdx);
         strcpy(mBestUserList[cnt], user.name);
         cnt += 1;
     }
-    for (auto ptr = popped.head; ptr; ptr=ptr->next) {
-        auto uIdx = ptr->data;
+    for (auto ptr = popped.head; ptr; ptr = ptr->next) {
+        int uIdx = ptr->data;
         Q.push({ users[uIdx].name, users[uIdx].total });
     }
 }
