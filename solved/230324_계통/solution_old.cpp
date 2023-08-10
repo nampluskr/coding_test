@@ -9,8 +9,8 @@ using namespace std;
 #define MAXL (11) 
 
 struct Node {
-	int parent;		// ºÎ¸ğ ³ëµå ¹øÈ£
-	int depth;		// ·çÆ® ³ëµåºÎÅÍÀÇ °Å¸®
+	int parent;		// ë¶€ëª¨ ë…¸ë“œ ë²ˆí˜¸
+	int depth;		// ë£¨íŠ¸ ë…¸ë“œë¶€í„°ì˜ ê±°ë¦¬
 };
 
 unordered_map<string, int> nodeMap;
