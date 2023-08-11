@@ -60,28 +60,28 @@ struct DoubleEndedPQ {
         idx += 1;
         size += 1;
     }
+    void refresh() {
+        while (!maxHeap.empty() && isPopped[maxHeap.top().idx]) { maxHeap.pop(); }
+        while (!minHeap.empty() && isPopped[minHeap.top().idx]) { minHeap.pop(); }
+    }
     void popMax() {
-        while (!maxHeap.empty() && isPopped[maxHeap.top().idx])
-            maxHeap.pop();
+        refresh();
         isPopped[maxHeap.top().idx] = true;
         maxHeap.pop();
         size -= 1;
     }
     void popMin() {
-        while (!minHeap.empty() && isPopped[minHeap.top().idx])
-            minHeap.pop();
+        refresh();
         isPopped[minHeap.top().idx] = true;
         minHeap.pop();
         size -= 1;
     }
     Type top() {
-        while (!maxHeap.empty() && isPopped[maxHeap.top().idx])
-            maxHeap.pop();
+        refresh();
         return maxHeap.top().data;
     }
     Type bottom() {
-        while (!minHeap.empty() && isPopped[minHeap.top().idx])
-            minHeap.pop();
+        refresh();
         return minHeap.top().data;
     }
     bool empty() { return size == 0; }
