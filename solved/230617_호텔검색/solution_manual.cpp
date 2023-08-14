@@ -45,7 +45,7 @@ struct Data {
     bool operator<(const Data& data) const { return dist > data.dist; }
 };
 LinkedList<Data> graph[NUM_HOTELS];
-int dist[NUM_HOTELS];            // dist[x] start ~ x ±îÁö °Å¸®
+int dist[NUM_HOTELS];            // dist[x] start ~ x Â±Ã®ÃÃ¶ Â°Ã…Â¸Â®
 
 #if 0
 struct PriorityQueue {
@@ -83,8 +83,7 @@ struct PriorityQueue {
         heap[0] = heap[heapSize];
         int current = 0;
 
-        while (current * 2 + 1 < heapSize)
-        {
+        while (current * 2 + 1 < heapSize) {
             int child;
             if (current * 2 + 2 == heapSize) {
                 child = current * 2 + 1;
@@ -92,7 +91,7 @@ struct PriorityQueue {
             else {
                 child = heap[current * 2 + 2] < heap[current * 2 + 1] ? current * 2 + 1 : current * 2 + 2;
             }
-            if (heap[current] < heap[child]) {
+            if (heap[child] < heap[current]) {
                 break;
             }
             Type temp = heap[current];
