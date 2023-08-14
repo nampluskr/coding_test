@@ -3,6 +3,7 @@
 #endif
 
 #include <stdio.h>
+#include <time.h>
 
 #define CMD_INIT 1
 #define CMD_ADD 2
@@ -69,8 +70,6 @@ static bool run()
     return isCorrect;
 }
 
-#include <time.h>
-
 int main()
 {
     clock_t start = clock();
@@ -82,8 +81,10 @@ int main()
 
     for (tc = 1; tc <= T; tc++)
     {
+        clock_t tc_start = clock();
         int score = run() ? MARK : 0;
-        printf("#%d %d\n", tc, score);
+        int tc_result = (clock() - tc_start) / (CLOCKS_PER_SEC / 1000);
+        printf("#%2d %d (%3d ms)\n", tc, score, tc_result);
     }
     int result = (clock() - start) / (CLOCKS_PER_SEC / 1000);
     printf("RESULT : %dms\n", result);

@@ -1,107 +1,113 @@
-#include <vector>
+#if 0
+// STL 593 ms
 #include <queue>
+#include <vector>
 using namespace std;
 
-#define NUM_AIRPORTS 60
-#define INF INT32_MAX   // 2147483647
+#define NUM_AIRPORTS	60
+#define INF		INT32_MAX	//	2147483647
 
-struct TimeData {
-    int x;
-    int start_time;
-    int travel_time;
-    int time;
-    bool operator<(const TimeData& data) const { return time > data.time; }
+struct Airline {
+	int to;
+	int start_time;
+	int travel_time;
+	int price;
 };
-struct PriceData {
-    int x;
-    int price;      // start -> end (travel price)
-    bool operator<(const PriceData& data) const { return price > data.price; }
-};
-
-struct Airport {
-    int start_time;
-    vector<TimeData> timeList;
-    vector<PriceData> priceList;
-};
-
-vector<Airport> airports;
+vector<vector<Airline>> airlines;
 int airportCnt;
 
-//////////////////////////////////////////////////////////////////////////////
+struct TimeData {
+	int to;
+	int time;
+	bool operator<(const TimeData& data) const { return time > data.time; }
+};
+
+struct PriceData {
+	int to;
+	int price;
+	bool operator<(const PriceData& data) const { return price > data.price; }
+};
+
+/////////////////////////////////////////////////////////////////
 void init(int N)
 {
-    airports.clear(); airports.resize(NUM_AIRPORTS);
-    airportCnt = N;
+	airlines.clear();	airlines.resize(NUM_AIRPORTS);
+	airportCnt = N;
 }
 
+// 3¸¸¹ø
 void add(int mStartAirport, int mEndAirport, int mStartTime, int mTravelTime, int mPrice)
 {
-    airports[mStartAirport].timeList.push_back({ mEndAirport, mStartTime, mTravelTime });
-    airports[mStartAirport].priceList.push_back({ mEndAirport, mPrice });
+	airlines[mStartAirport].push_back({ mEndAirport, mStartTime, mTravelTime, mPrice });
 }
 
+// 1,000
 int minTravelTime(int mStartAirport, int mEndAirport, int mStartTime)
 {
-    int ret = -1;
-    priority_queue<TimeData> Q;
-    vector<int> time(airportCnt, INF);
+	int ret = -1;
+	priority_queue<TimeData> Q;
+	vector<int> cost(airportCnt, INF);
 
-    time[mStartAirport] = mStartTime;
-    Q.push({ mStartAirport, mStartTime, 0, 0 });
+	Q.push({ mStartAirport, mStartTime });
+	cost[mStartAirport] = mStartTime;
 
-    while (!Q.empty()) {
-        auto current = Q.top(); Q.pop();
+	while (!Q.empty())
+	{
+		auto data = Q.top(); Q.pop();
+		int cur_to = data.to, cur_time = data.time;
 
-        if (current.x != mStartAirport && current.x == mEndAirport) {
-            ret = current.time;
-            break;
-        }
-        if (time[current.x] < current.time) continue;
+		if (cur_to != mStartAirport && cur_to == mEndAirport) {
+			ret = cur_time - mStartTime;
+			break;
+		}
+		if (cur_time > cost[cur_to]) continue;
 
-        for (auto next : airports[current.x].timeList) {
-            int current_time = current.time % 24;
-            int wait_time;
+		for (const auto& next : airlines[cur_to]) {
+			cur_time %= 24;
+			int wait_time;
 
-            if (current_time > next.start_time) { 
-                wait_time = 24 - (current_time - next.start_time);
-            }
-            else { wait_time = next.start_time - current_time; }
+			if (cur_time > next.start_time)
+				wait_time = 24 - (cur_time - next.start_time);
+			else
+				wait_time = next.start_time - cur_time;
 
-            if (time[next.x] > time[current.x] + wait_time + next.time) {
-                time[next.x] = time[current.x] + wait_time + next.time;
-                Q.push({ next.x, next.start_time, next.travel_time, time[next.x] });
-            }
-        }
-    }
-    //if (time[mEndAirport] != INF) { ret = time[mEndAirport]; }
-    return ret;
+			if (cost[next.to] > cost[cur_to] + wait_time + next.travel_time) {
+				cost[next.to] = cost[cur_to] + wait_time + next.travel_time;
+				Q.push({ next.to, cost[next.to] });
+			}
+		}
+	}
+	return ret;
 }
 
+// 5,000
 int minPrice(int mStartAirport, int mEndAirport)
 {
-    int ret = -1;
-    priority_queue<PriceData> Q;
-    vector<int> price(airportCnt, INF);
+	int ret = -1;
+	priority_queue<PriceData> Q;
+	vector<int> cost(airportCnt, INF);
 
-    price[mStartAirport] = 0;
-    Q.push({ mStartAirport, 0 });
+	Q.push({ mStartAirport, 0 });
+	cost[mStartAirport] = 0;
 
-    while (!Q.empty()) {
-        auto current = Q.top(); Q.pop();
+	while (!Q.empty())
+	{
+		auto data = Q.top(); Q.pop();
+		int cur_to = data.to, cur_price = data.price;
 
-        if (current.x != mStartAirport && current.x == mEndAirport) {
-            ret = current.price;
-            break;
-        }
-        if (price[current.x] < current.price) continue;
+		if (cur_to != mStartAirport && cur_to == mEndAirport) {
+			ret = cur_price;
+			break;
+		}
+		if (cur_price > cost[cur_to]) continue;
 
-        for (auto next : airports[current.x].priceList) {
-            if (price[next.x] > price[current.x] + next.price) {
-                price[next.x] = price[current.x] + next.price;
-                Q.push({ next.x, price[next.x] });
-            }
-        }
-    }
-    //if (price[mEndAirport] != INF) { ret = price[mEndAirport]; }
-    return ret;
+		for (const auto& next : airlines[cur_to]) {
+			if (cost[next.to] > cost[cur_to] + next.price) {
+				cost[next.to] = cost[cur_to] + next.price;
+				Q.push({ next.to, cost[next.to] });
+			}
+		}
+	}
+	return ret;
 }
+#endif
