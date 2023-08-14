@@ -1,5 +1,6 @@
-#if 1
-// Manual xxx ms: Array + Linked List + Priorirty Queue
+#if 0
+// Manual 536 ms: Array + Linked List
+// Priority Queue hepa[NUMM_ROOMS]: 메모리 초과
 //#include <vector>
 #include <queue>
 using namespace std;
@@ -21,7 +22,6 @@ struct LinkedList {
         if (head == nullptr) { head = node; tail = node; }
         else { tail->next = node; tail = node; }
     }
-
 };
 
 struct CheckInOut {

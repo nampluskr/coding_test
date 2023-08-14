@@ -1,4 +1,4 @@
-#if 0
+#if 1
 // STL 546 ms
 #include <vector>
 #include <queue>
@@ -28,14 +28,14 @@ struct Room {
     void update_roomPQ();
 };
 vector<Room> rooms;
-int roomCnt;
+//int roomCnt;
 
 struct Hotel {
     int total_price;
     vector<int> roomList;
 };
 vector<Hotel> hotels;
-int hotelCnt;
+//int hotelCnt;
 
 struct Data {
     int rID;
@@ -55,10 +55,10 @@ void Room::update_roomPQ() {
 void init(int N, int mRoomCnt[])
 {
     rooms.clear();	rooms.resize(NUM_ROOMS);
-    roomCnt = 0;
+    //roomCnt = 0;
 
     hotels.clear();	hotels.resize(N + 1);
-    hotelCnt = N;
+    //hotelCnt = N;
 
     for (int i = 0; i < 11; i++)
         for (int j = 0; j < 11; j++)
