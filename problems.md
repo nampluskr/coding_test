@@ -32,7 +32,7 @@
 ## 가중치 그래프 (네트워크, Dijkstra)
 
 - [x] [230617_호텔검색](https://github.com/nampluskr/coding_test/tree/main/solved/230617_%ED%98%B8%ED%85%94%EA%B2%80%EC%83%89) : STL 553 ms / Manual 410 ms
-- [ ] 221209_항공노선관리
+- [ ] [221209_항공노선관리](https://github.com/nampluskr/coding_test/tree/main/solved/221209_%ED%95%AD%EA%B3%B5%EB%85%B8%EC%84%A0%EA%B4%80%EB%A6%AC) : STL 593 ms / Manual 813 ms
 - [ ] 221001_물류허브
 - [ ] 211218_P2P_네트워크
 
