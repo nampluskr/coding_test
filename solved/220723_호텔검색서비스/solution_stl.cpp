@@ -1,4 +1,4 @@
-#if 1
+#if 0
 // STL 546 ms
 #include <vector>
 #include <queue>

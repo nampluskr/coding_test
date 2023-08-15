@@ -1,9 +1,8 @@
-#if 0
-// Manual 536 ms: Array + Linked List
-// Priority Queue: roomPQ[11][11][5][5] 메모리 초과
+#if 1
+// Manual 552 ms: Array + Linked List + Priority Queue roomPQ[11][11]
 //#include <vector>
-#include <queue>
-using namespace std;
+//#include <queue>
+//using namespace std;
 
 #define NUM_HOTELS	1000
 #define NUM_ROOMS	100001
@@ -46,14 +45,12 @@ struct Room {
     void update_roomPQ();
 };
 Room rooms[NUM_ROOMS];
-//int roomCnt;
 
 struct Hotel {
     int total_price;
     LinkedList<int> roomList;
 };
 Hotel hotels[NUM_HOTELS];
-//int hotelCnt;
 
 struct Data {
     int rID;
@@ -64,7 +61,7 @@ struct Data {
     }
 };
 
-#if 1
+#if 0
 template<typename Type>
 struct PriorityQueue {
     priority_queue<Type> heap;
@@ -121,10 +118,10 @@ struct PriorityQueue {
 };
 #endif
 
-PriorityQueue<Data> roomPQ[11][11][5][5];
+PriorityQueue<Data> roomPQ[11][11];
 
 void Room::update_roomPQ() {
-    roomPQ[info[0]][info[1]][info[2]][info[3]].push({ rID, price });
+    roomPQ[info[0]][info[1]].push({ rID, price });
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -135,9 +132,7 @@ void init(int N, int mRoomCnt[])
 
     for (int i = 0; i < 11; i++)
         for (int j = 0; j < 11; j++)
-            for (int k = 0; k < 5; k++)
-                for (int l = 0; l < 5; l++)
-                    roomPQ[i][j][k][l].init();
+            roomPQ[i][j].init();
 }
 
 void addRoom(int mHotelID, int mRoomID, int mRoomInfo[])
@@ -161,15 +156,18 @@ int findRoom(int mFilter[])
     int rID = -1;
     int check_in = mFilter[0];
     int check_out = mFilter[1];
-    auto& Q = roomPQ[mFilter[2]][mFilter[3]][mFilter[4]][mFilter[5]];
+    auto& Q = roomPQ[mFilter[2]][mFilter[3]];
 
     LinkedList<int> popped;
     while (!Q.empty()) {
         auto data = Q.top(); Q.pop();
 
-        if (data.price != rooms[data.rID].price) continue;
+        if (rooms[data.rID].price != data.price) continue;
 
         popped.push_back(data.rID);
+        if (rooms[data.rID].info[2] != mFilter[4]) continue;
+        if (rooms[data.rID].info[3] != mFilter[5]) continue;
+
         if (rooms[data.rID].check_date(check_in, check_out)) {
             rID = data.rID;
             rooms[rID].checkList.push_back({ check_in, check_out });
@@ -180,7 +178,6 @@ int findRoom(int mFilter[])
         auto _rID = ptr->data;
         Q.push({ _rID, rooms[_rID].price });
     }
-
     return rID;
 }
 
