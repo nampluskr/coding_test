@@ -1,11 +1,12 @@
-﻿#if 1
-// STL 997 ms: 조회시 마다 힙정렬
+﻿#if 0
+// STL 990 ms: 조회시 마다 힙정렬
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <vector>
 #include <string>
 #include <unordered_map>
 #include <queue>
+#include <string.h>
 using namespace std;
 
 #define MAXL		8
@@ -67,7 +68,6 @@ vector<int> get_topk(char prefix[], int k) {
 
 	// 힙정렬
 	for (int wIdx = 0; wIdx < wordCnt; wIdx++) {
-		int group = words[wIdx].group;
 		if (strncmp(words[wIdx].str, prefix, strlen(prefix)) == 0)
 			Q.push({ wIdx, words[wIdx].str, groups[words[wIdx].group].count});
 	}
@@ -102,12 +102,13 @@ void search(char mStr[], int mCount)
 
 // 데이터 조회: 500
 Result recommend(char mStr[])
-{
+{ 
 	Result ret = { 0, 0 };
-	char prefix[MAXL];
+	char prefix[MAXL] = "";
 
 	for (int i = 0; i <= strlen(mStr); i++) {
 		strncpy(prefix, mStr, i);
+		//strcpy(prefix, string(mStr).substr(0, i).c_str());
 		const auto& top5 = get_topk(prefix, 5);
 
 		for (int j = 0; j < top5.size(); j++)
