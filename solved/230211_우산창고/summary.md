@@ -27,16 +27,16 @@ void init(int N, int mParent[], int mDistance[], int mQuantity[]) {}
 ```cpp
 int carry(int mFrom, int mTo, int mQuantity) { return 0; }
 ```
-- `mFrom`번 창고에서 `mTo`번 창고로 `mQuantity`개의 우산을 최단 경로로 옮긴다.
+- mFrom번 창고에서 mTo번 창고로 mQuantity개의 우산을 최단 경로로 옮긴다.
 - 지불한 비용을 반환한다.
 
 ```cpp
 int gather(int mID, int mQuantity) { return 0; }
 ```
-- `mID`번 창고가 다른 창고들에게 총 `mQuantity`개의 우산을 보내달라고 요청한다.
+- mID번 창고가 다른 창고들에게 총 mQuantity개의 우산을 보내달라고 요청한다.
 - 우선순위가 높은 창고에 있는 우산부터 옮긴다.
-  1. `mID`번 창고와의 거리가 가까운 순
-  2. `mID`번 창고와의 거리가 같을 경우, 고유 번호가 작은 순
+  1. mID번 창고와의 거리가 가까운 순
+  2. mID번 창고와의 거리가 같을 경우, 고유 번호가 작은 순
 - 우산은 항상 최단 경로로 옮긴다.
 - 지불한 비용을 반환한다.
 
@@ -44,4 +44,4 @@ int gather(int mID, int mQuantity) { return 0; }
 ```cpp
 int sum(int mID) { return 0; }
 ```
-- `mID`번 창고의 자손 창고들에 있는 우산의 총 개수를 반환한다.
+- mID번 창고의 자손 창고들에 있는 우산의 총 개수를 반환한다.

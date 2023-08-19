@@ -56,7 +56,6 @@ void cancelNews(int mTime, int mNewsID) {}
 - mTime 시각에 mNewsID 뉴스가 취소되어 삭제된다.
 - mNewsID 뉴스가 유저들에게 뉴스 알림이 보내 졌으면 유저에게 있는 mNewsID 뉴스 알림도 삭제되어야 한다.
 
-
 ```cpp
 int checkUser(int mTime, int mUID, int mRetIDs[]) {}
 ```
