@@ -62,6 +62,58 @@ int main()
 }
 ```
 
+### [BOJ] 2110 공유기설치
+
+```cpp
+// BOJ 2110 기지국설치
+#include <vector>
+#include <algorithm>
+#include <stdio.h>
+using namespace std;
+
+inline int min(int a, int b) { return (a < b) ? a : b; }
+inline int max(int a, int b) { return (a > b) ? a : b; }
+
+int search(const vector<int>& data, int start, int end, int target) {
+    int sol = 0;
+
+    while (start <= end) {
+        int mid = (start + end) / 2;
+        int cnt = 1;
+        int cur = data[0];
+
+        for (int i = 1; i < data.size(); i++) {
+            if (data[i] - cur >= mid) {
+                cnt += 1;
+                cur = data[i];
+            }
+        }
+        if (cnt >= target) {
+            sol = max(sol, mid);
+            start = mid + 1;
+        }
+        else { end = mid - 1; }
+    }
+    return sol;
+}
+
+int main()
+{
+    vector<int> data = { 1, 2, 8, 4, 9 };
+    int target = 3;
+    int ret;    // ans = 3
+
+    sort(data.begin(), data.end());
+    int start = 1;
+    int end = data.back() - data.front();
+
+    ret = search(data, start, end, target);
+    printf(">> Result: %d\n", ret);
+
+    return 0;
+}
+```
+
 ### [BOJ_1654_랜선자르기]
 
 ```cpp
