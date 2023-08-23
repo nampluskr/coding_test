@@ -7,9 +7,9 @@ bool is_possible(int mid, int target) {
     return temp >= target;
 }
 
-while () {
+while (start <= end) {
     int mid = (start + end) / 2;
-    if (is_possible(mid)) { start = mid -1; }
+    if (is_possible(mid, target)) { start = mid -1; }
     else { end = mid - 1;}
 }
 ```
