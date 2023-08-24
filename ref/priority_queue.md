@@ -13,7 +13,6 @@ struct Data {
     }
 };
 
-#if 0
 priority_queue<Data> Q;
 #else
 template<typename Type>
@@ -29,7 +28,6 @@ struct PriorityQueue {
 };
 
 PriorityQueue<Data> Q;
-#endif
 
 int main()
 {
