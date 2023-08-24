@@ -13,14 +13,18 @@ struct ListNode {
     ListNode* next;
 };
 
-struct HashTable {
+struct UnorderedMap {
     ListNode heap[MAX_HEAP_SIZE];
     int hrp = 0;
     ListNode* table[MAX_TABLE];
 
     void clear() { hrp = 0; }
-    void insert(int carID, int Idx) {
+    int hash(int carID) {
         int hashkey = carID % MAX_TABLE;
+        return hashkey;
+    }
+    void insert(int carID, int Idx) {
+        int hashkey = hash(carID);
         ListNode* node = &heap[hrp];
         node->Idx = Idx;
         node->next = table[hashkey];
@@ -28,7 +32,7 @@ struct HashTable {
         hrp += 1;
     }
     int find(int carID) {
-        int hashkey = carID % MAX_TABLE;
+        int hashkey = hash(carID);
         ListNode* temp = carMap.table[hashkey];
         while (temp != 0) {
             int Idx = temp->Idx;
@@ -40,7 +44,7 @@ struct HashTable {
     }
 
 };
-HashTable carMap;
+UnorderedMap carMap;
 
 struct Car {
     int carID;
