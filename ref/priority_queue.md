@@ -1,4 +1,4 @@
-## [STL] Priority Queue
+## [STL] Priority Queue (Max. Heap)
 
 ```cpp
 #include <queue>
@@ -37,7 +37,7 @@ int main()
     //while (!Q.empty()) { Q.pop(); }
     Q.clear();
 
-    // 입력
+    // 입력 (힙정렬 O(NlogN))
     Q.push({ 3, 30 });
     Q.push({ 2, 20 });
     Q.push({ 1, 10 });
@@ -46,7 +46,7 @@ int main()
     int size = Q.size();
     printf("%d\n", size);
 
-    // 탐색
+    // 탐색 (힙정렬 O(NlogN))
     while (!Q.empty()) {
         auto data = Q.top(); Q.pop();
 
@@ -57,7 +57,7 @@ int main()
 }
 ```
 
-## [Manual] Priority Queue
+## [Manual] Priority Queue (Max. Heap)
 
 ```cpp
 #include <stdio.h>
@@ -125,7 +125,7 @@ int main()
     //while (!Q.empty()) { Q.pop(); }
     Q.clear();
 
-    // 입력
+    // 입력 (힙정렬 O(NlogN))
     Q.push({ 3, 30 });
     Q.push({ 2, 20 });
     Q.push({ 1, 10 });
@@ -134,7 +134,7 @@ int main()
     int size = Q.size();
     printf("%d\n", size);
 
-    // 탐색
+    // 탐색 (힙정렬 O(NlogN))
     while (!Q.empty()) {
         auto data = Q.top(); Q.pop();
 
