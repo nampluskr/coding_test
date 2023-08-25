@@ -13,8 +13,6 @@ struct Data {
     }
 };
 
-priority_queue<Data> Q;
-#else
 template<typename Type>
 struct PriorityQueue {
     priority_queue<Data> heap;
