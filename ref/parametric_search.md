@@ -1,4 +1,4 @@
-### [Parametric Search]
+## Binary Search - Parametric Search
 
 ```cpp
 bool is_possible(int mid, int target) {

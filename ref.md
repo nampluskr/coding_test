@@ -18,7 +18,7 @@
 - 그래프 탐색: BFS (2D Grid)
 - 최소 비용 경로 구하기: Dijkstra Algorithm (양의 가중치)
 - 최소 비용 경로 구하기: Bellman-Ford Altorithm (음의 가중치)
-- 이진 탐색: Parametric Search
+- [이진 탐색: Parametric Search](https://github.com/nampluskr/coding_test/blob/main/ref/parametric_search.md)
 
 ## 수학함수
 
