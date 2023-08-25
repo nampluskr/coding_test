@@ -63,7 +63,7 @@
 
 ## 이진 탐색 - Parametric Search
 - [ ] [230805_상품권배분](https://github.com/nampluskr/coding_test/tree/main/solved/230805_%EC%83%81%ED%92%88%EA%B6%8C%EB%B0%B0%EB%B6%84)
-- [ ] 230127_기지국설치
+- [ ] [230127_기지국설치](https://github.com/nampluskr/coding_test/tree/main/solved/230127_%EA%B8%B0%EC%A7%80%EA%B5%AD%EC%84%A4%EC%B9%98) : STL 1135 ms
 
 ## 2D 시뮬레이션 - 경로탐색 (BFS)
 - [ ] 230819_박테리아번식
