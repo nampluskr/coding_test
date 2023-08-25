@@ -23,14 +23,14 @@
 - [ ] 210619_수강신청
 - [ ] 210417_클러스터
 
-## 우선순위큐 - 데이터 변경: 조건별 사전 정렬
+## 우선순위큐 - 데이터 변경 (조건별 사전 정렬)
 
 - [x] [230624_단어미로](https://github.com/nampluskr/coding_test/tree/main/solved/230624_%EB%8B%A8%EC%96%B4%EB%AF%B8%EB%A1%9C) : STL 1742 ms / strcmp 680 ms / Manual 769 ms
 - [X] [230310_검색엔진2](https://github.com/nampluskr/coding_test/tree/main/solved/230310_%EA%B2%80%EC%83%89%EC%97%94%EC%A7%842)
 - [X] [230526_단어게임](https://github.com/nampluskr/coding_test/tree/main/solved/230526_%EB%8B%A8%EC%96%B4%EA%B2%8C%EC%9E%84)
 - [X] [220723_호텔검색서비스](https://github.com/nampluskr/coding_test/tree/main/solved/220723_%ED%98%B8%ED%85%94%EA%B2%80%EC%83%89%EC%84%9C%EB%B9%84%EC%8A%A4)
 
-## 우선순위큐 - 데이터 삭제: 조건별 사전 정렬
+## 우선순위큐 - 데이터 삭제 (조건별 사전 정렬)
 
 - [X] [230722_전자게시판](https://github.com/nampluskr/coding_test/tree/main/solved/230722_%EC%A0%84%EC%9E%90%EA%B2%8C%EC%8B%9C%ED%8C%90) : STL 19608 ms (호출후 우큐 정렬) / STL (호출전 우큐 정렬 ) 507 ms / Manual 472 ms
 - [X] [230414_뉴스알림](https://github.com/nampluskr/coding_test/tree/main/solved/230414_%EB%89%B4%EC%8A%A4%EC%95%8C%EB%A6%BC)
@@ -41,7 +41,7 @@
 - [ ] 230714_전자상가
 - [ ] 230512_공지방송
 
-## 트리 - 노드 추가/삭제: 상위/하위 노드 업데이트
+## 트리 - 노드 추가/삭제: 부모/자식 업데이트 (재귀)
 
 - [ ] [230805_상품권배분](https://github.com/nampluskr/coding_test/tree/main/solved/230805_%EC%83%81%ED%92%88%EA%B6%8C%EB%B0%B0%EB%B6%84)
 - [ ] [230707_조직개편](https://github.com/nampluskr/coding_test/tree/main/solved/230707_%EC%A1%B0%EC%A7%81%EA%B0%9C%ED%8E%B8)
@@ -59,14 +59,18 @@
 - [X] [221209_항공노선관리](https://github.com/nampluskr/coding_test/tree/main/solved/221209_%ED%95%AD%EA%B3%B5%EB%85%B8%EC%84%A0%EA%B4%80%EB%A6%AC) : STL 593 ms / Manual 813 ms
 - [X] [221001_물류허브](https://github.com/nampluskr/coding_test/tree/main/solved/221001_%EB%AC%BC%EB%A5%98%ED%97%88%EB%B8%8C) : 
 
-## 이진 탐색: Parametric Search
+## 이진 탐색 - Parametric Search
 - [ ] [230805_상품권배분](https://github.com/nampluskr/coding_test/tree/main/solved/230805_%EC%83%81%ED%92%88%EA%B6%8C%EB%B0%B0%EB%B6%84)
 - [ ] 230127_기지국설치
 
-## 2D 시뮬레이션 - BFS
+## 2D 시뮬레이션 - 경로탐색 (BFS)
 - [ ] 230819_박테리아번식
-- [ ] 230811_로봇운송차단
+- [ ] 230811_로봇운송차단 (2D 해시)
+- [ ] 230602_로봇청소기
+- [ ] 220702_세균번식
+- [ ] 190309_별자리검색 (2D 해시)
 
 ## 문자열 파싱
 - [ ] 230128_즉석계산기
 - [ ] 230114_XY_Polynomial
+- [ ] 210925_문자열 관리 프로그램
