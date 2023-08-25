@@ -5,8 +5,8 @@
 - [링크드 리스트 (Linked List)](https://github.com/nampluskr/coding_test/blob/main/ref/linked_list.md)
 - [큐 (Queue)](https://github.com/nampluskr/coding_test/blob/main/ref/queue.md)
 - [우선순위 큐 (Prioirty Queue): Max. Heap](https://github.com/nampluskr/coding_test/blob/main/ref/priority_queue.md)
-- 해시 테이블 (Hash Table): 정수 맵핑
-- 해시 테이블 (Hash Table): 문자열 맵핑
+- [해시 체이닝 (Hash Chaining): 정수 맵핑](https://github.com/nampluskr/coding_test/blob/main/ref/hash_chaining_int.md)
+- [해시 체이닝 (Hash Chaining): 문자열 맵핑](https://github.com/nampluskr/coding_test/blob/main/ref/hash_chaining_str.md)
 - [이중 우선순위 큐 (Double-ended Queue): Min. / Max. Heap](https://github.com/nampluskr/coding_test/blob/main/ref/double_ended_pq.md)
 - 파티션 (Square Root Decomposition): Point Update / Range Query
 - 파티션 (Square Root Decomposition): Range Update / Point Query
