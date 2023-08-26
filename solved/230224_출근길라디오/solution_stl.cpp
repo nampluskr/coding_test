@@ -1,5 +1,5 @@
 ﻿#if 0
-// STL 829 ms: Partition (Point update + Range query)
+// STL 679 ms (Brute Force 1176 ms)
 #include <vector>
 using namespace std;
 
@@ -8,7 +8,6 @@ struct Road {
     int type;
 };
 vector<Road> roads;
-int roadCnt;
 
 struct Type {
     vector<int> roadList;
@@ -18,18 +17,24 @@ vector<Type> types;
 //////////////////////////////////////////////////////////////////////////
 struct Partition {
     vector<int> buckets;
+    vector<int> values;
     int N;    // bucket size
 
     void init(int num_values) {
         N = sqrt(num_values);
         int num_buckets = ceil((double)num_values / N);
         buckets.clear(); buckets.resize(num_buckets);
+        values.clear(); values.resize(num_values);
 
-        for (int i = 0; i < num_values; i++) { buckets[i / N] += roads[i].time; }
+        // 초기화
+        for (int i = 0; i < num_values; i++) {
+            values[i] = roads[i].time;
+            buckets[i / N] += roads[i].time;
+        }
     }
     void update(int idx, int value) {
-        buckets[idx / N] -= roads[idx].time;
-        roads[idx].time = value;
+        buckets[idx / N] -= values[idx];
+        values[idx] = value;
         buckets[idx / N] += value;
     }
     int query(int left, int right) {
@@ -38,11 +43,11 @@ struct Partition {
         int e = right / N;
 
         if (s == e) {
-            for (int i = left; i <= right; i++) { ret += roads[i].time; }
+            for (int i = left; i <= right; i++) { ret += values[i]; }
             return ret;
         }
-        while (left / N == s) { ret += roads[left++].time; }
-        while (right / N == e) { ret += roads[right--].time; }
+        while (left / N == s) { ret += values[left++]; }
+        while (right / N == e) { ret += values[right--]; }
         for (int i = s + 1; i <= e - 1; i++) { ret += buckets[i]; }
 
         return ret;
@@ -51,11 +56,8 @@ struct Partition {
 Partition part;
 
 //////////////////////////////////////////////////////////////////////////
-// N: 지점의 개수(10 ≤ N ≤ 100,000)
-// M : 도로의 종류(1 ≤ M ≤ 1,000)
 void init(int N, int M, int mType[], int mTime[])
 {
-    roadCnt = 0;
     roads.clear();    roads.resize(N - 1);
     types.clear();    types.resize(M);
 
@@ -69,37 +71,31 @@ void init(int N, int M, int mType[], int mTime[])
 
 void destroy() {}
 
-// 10,000
 void update(int mID, int mNewTime)
 {
-    //roads[mID].time = mNewTime;
+    roads[mID].time = mNewTime;
     part.update(mID, mNewTime);
 }
 
-// 200
 int updateByType(int mTypeID, int mRatio256)
 {
     int ret = 0;
     for (int rIdx : types[mTypeID].roadList) {
         int temp = roads[rIdx].time * mRatio256 / 256;
-        //roads[rIdx].time = temp;
+        roads[rIdx].time = temp;
         part.update(rIdx, temp);
         ret += roads[rIdx].time;
     }
     return ret;
 }
 
-// 100,000
 int calculate(int mA, int mB)
 {
+    int ret = 0;
     if (mA > mB) { swap(mA, mB); }
 
-    //int ret = 0;
-    //for (int rIdx = mA; rIdx < mB; rIdx++) {
-    //    ret += roads[rIdx].time;
-    //}
-    //return ret;
-
-    return part.query(mA, mB - 1);
+    //for (int i = mA; i < mB; i++) { ret += roads[i].time; }
+    ret = part.query(mA, mB - 1);
+    return ret;
 }
 #endif
