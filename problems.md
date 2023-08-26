@@ -1,7 +1,7 @@
 ## 파티션 - 1D 배열: Update / Query
 - [x] [230520_미생물가계도](https://github.com/nampluskr/sw_pro/tree/main/solved/230520_%EB%AF%B8%EC%83%9D%EB%AC%BC%EA%B0%80%EA%B3%84%EB%8F%84) : 
 - [x] [230429_블록쌓기게임](https://github.com/nampluskr/sw_pro/tree/main/solved/230429_%EB%B8%94%EB%A1%9D%EC%8C%93%EA%B8%B0%EA%B2%8C%EC%9E%84) : STL 1728 ms / Manual 871 ms
-- [x] [230224_출근길라디오](https://github.com/nampluskr/sw_pro/tree/main/solved/230224_%EC%B6%9C%EA%B7%BC%EA%B8%B8%EB%9D%BC%EB%94%94%EC%98%A4) : STL 829 ms / Manual 717 ms
+- [x] [230224_출근길라디오](https://github.com/nampluskr/sw_pro/tree/main/solved/230224_%EC%B6%9C%EA%B7%BC%EA%B8%B8%EB%9D%BC%EB%94%94%EC%98%A4) : Manual 635 ms / STL 679 ms / Brute Force 1176 ms
 - [x] [221210_최대최소값찾기](https://github.com/nampluskr/sw_pro/tree/main/solved/221210_%EC%B5%9C%EB%8C%80%EC%B5%9C%EC%86%8C%EA%B0%92%EC%B0%BE%EA%B8%B0) : STL 1097 ms / Manual 704 ms
 - [ ] 221202_블록제거게임
 

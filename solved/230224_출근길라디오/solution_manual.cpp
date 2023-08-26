@@ -1,5 +1,5 @@
 #if 1
-// Manusl 635 ms / STL 679 ms / Brute Force 1176 ms
+// Manual 635 ms / STL 679 ms / Brute Force 1176 ms
 #define NUM_ROADS   100000
 #define NUM_TYPES   1000
 
