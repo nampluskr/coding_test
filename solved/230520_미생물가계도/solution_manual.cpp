@@ -1,4 +1,4 @@
-﻿#if 1
+﻿#if 0
 // Manual 885 ms: Tree (LCA), Partition (Range update + Point query)
 // Array
 #include <unordered_map>
