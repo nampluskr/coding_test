@@ -1,13 +1,10 @@
-#if 1
-// [TC = 50] Manual xxx ms / STL 2628 ms / Brue force 160,544 ms
+#if 0
+// [TC = 50] Manual 2812 ms / STL 2628 ms / Brue force 160,544 ms
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <vector>
-#include <string>
-#include <unordered_map>
-using namespace std;
+#include <string.h>
 
 #define NUM_COMPOUNDS   (5000)
 
@@ -20,6 +17,7 @@ struct INFO {
 };
 
 extern int calc_correlation(const char str1[11], const char str2[11]);
+int max(int a, int b) { return (a > b) ? a : b; }
 
 struct Compound {
     INFO info;
@@ -44,11 +42,22 @@ struct LinkedList {
     }
 };
 
-unordered_map<string, LinkedList<int>> dbMap1;
-unordered_map<string, LinkedList<int>> dbMap2;
-unordered_map<string, LinkedList<int>> dbMap3;
-unordered_map<string, LinkedList<int>> dbMap4;
-unordered_map<string, LinkedList<int>> dbMap5;
+#define MAX_TABLE 70007
+
+unsigned long hashfunc(const char str[]) {
+    unsigned long hash = 5381;
+    int c;
+    while (c = *str++) {
+        hash = (((hash << 5) + hash) + c) % MAX_TABLE;
+    }
+    return hash % MAX_TABLE;
+}
+
+LinkedList<int> dbMap1[MAX_TABLE];
+LinkedList<int> dbMap2[MAX_TABLE];
+LinkedList<int> dbMap3[MAX_TABLE];
+LinkedList<int> dbMap4[MAX_TABLE];
+LinkedList<int> dbMap5[MAX_TABLE];
 
 //////////////////////////////////////////////////////////////////////////////
 int get_score(const INFO& info1, const INFO& info2) {
@@ -82,38 +91,52 @@ void addDB(INFO info)
     strcpy(db[cIdx].info.fourth, info.fourth);
     strcpy(db[cIdx].info.fifth, info.fifth);
 
-    dbMap1[string(info.first)].push_back(cIdx);
-    dbMap2[string(info.second)].push_back(cIdx);
-    dbMap3[string(info.third)].push_back(cIdx);
-    dbMap4[string(info.fourth)].push_back(cIdx);
-    dbMap5[string(info.fifth)].push_back(cIdx);
+    int hashkey1 = hashfunc(info.first);
+    dbMap1[hashkey1].push_back(cIdx);
+
+    int hashkey2 = hashfunc(info.second);
+    dbMap2[hashkey2].push_back(cIdx);
+
+    int hashkey3 = hashfunc(info.third);
+    dbMap3[hashkey3].push_back(cIdx);
+
+    int hashkey4 = hashfunc(info.fourth);
+    dbMap4[hashkey4].push_back(cIdx);
+
+    int hashkey5 = hashfunc(info.fifth);
+    dbMap5[hashkey5].push_back(cIdx);
 }
 
 // 5,000 x 5,00 x 5
 int newCompound(INFO info)
 {
     int ret = 0;
-    for (auto ptr = dbMap1[string(info.first)].head; ptr; ptr = ptr->next) {
+    int hashkey1 = hashfunc(info.first);
+    for (auto ptr = dbMap1[hashkey1].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
     }
-    for (auto ptr = dbMap2[string(info.second)].head; ptr; ptr = ptr->next) {
+    int hashkey2 = hashfunc(info.second);
+    for (auto ptr = dbMap2[hashkey2].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
     }
-    for (auto ptr = dbMap3[string(info.third)].head; ptr; ptr = ptr->next) {
+    int hashkey3 = hashfunc(info.third);
+    for (auto ptr = dbMap3[hashkey3].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
     }
-    for (auto ptr = dbMap4[string(info.fourth)].head; ptr; ptr = ptr->next) {
+    int hashkey4 = hashfunc(info.fourth);
+    for (auto ptr = dbMap4[hashkey4].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
     }
-    for (auto ptr = dbMap5[string(info.fifth)].head; ptr; ptr = ptr->next) {
+    int hashkey5 = hashfunc(info.fifth);
+    for (auto ptr = dbMap5[hashkey5].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
