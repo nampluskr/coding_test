@@ -1,5 +1,5 @@
-#if 0
-// Manual xxx ms / STL xxx ms / Brute force xxx ms
+#if 1
+// [TC = 50] Manual xxx ms / STL 2628 ms / Brue force 160,544 ms
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -24,7 +24,7 @@ extern int calc_correlation(const char str1[11], const char str2[11]);
 struct Compound {
     INFO info;
 };
-vector<Compound> db;
+Compound db[NUM_COMPOUNDS];
 int dbCnt;
 
 template<typename Type>
@@ -36,15 +36,19 @@ struct LinkedList {
     ListNode* head = nullptr;
     ListNode* tail = nullptr;
 
-    void init() { head = nullptr; tail = nullptr; }
+    void clear() { head = nullptr; tail = nullptr; }
     void push_back(const Type& data) {
-        ListNode* node = new ListNode({data, nullptr});
+        ListNode* node = new ListNode({ data, nullptr });
         if (head == nullptr) { head = node; tail = node; }
         else { tail->next = node; tail = node; }
     }
 };
 
-unordered_map<string, LinkedList<int>> dbMap[5];
+unordered_map<string, LinkedList<int>> dbMap1;
+unordered_map<string, LinkedList<int>> dbMap2;
+unordered_map<string, LinkedList<int>> dbMap3;
+unordered_map<string, LinkedList<int>> dbMap4;
+unordered_map<string, LinkedList<int>> dbMap5;
 
 //////////////////////////////////////////////////////////////////////////////
 int get_score(const INFO& info1, const INFO& info2) {
@@ -64,7 +68,7 @@ int get_score(const INFO& info1, const INFO& info2) {
 //////////////////////////////////////////////////////////////////////////////
 void init()
 {
-    db.clear();  db.resize(NUM_COMPOUNDS);
+    for (int i = 0; i < NUM_COMPOUNDS; i++) { db[i] = {}; }
     dbCnt = 0;
 }
 
@@ -78,38 +82,38 @@ void addDB(INFO info)
     strcpy(db[cIdx].info.fourth, info.fourth);
     strcpy(db[cIdx].info.fifth, info.fifth);
 
-    dbMap[0][string(info.first)].push_back(cIdx);
-    dbMap[1][string(info.second)].push_back(cIdx);
-    dbMap[2][string(info.third)].push_back(cIdx);
-    dbMap[3][string(info.fourth)].push_back(cIdx);
-    dbMap[4][string(info.fifth)].push_back(cIdx);
+    dbMap1[string(info.first)].push_back(cIdx);
+    dbMap2[string(info.second)].push_back(cIdx);
+    dbMap3[string(info.third)].push_back(cIdx);
+    dbMap4[string(info.fourth)].push_back(cIdx);
+    dbMap5[string(info.fifth)].push_back(cIdx);
 }
 
-// 5,000 x 5,000 x 5
+// 5,000 x 5,00 x 5
 int newCompound(INFO info)
 {
     int ret = 0;
-    for (auto ptr = dbMap[0][string(info.first)].head; ptr; ptr=ptr->next) {
+    for (auto ptr = dbMap1[string(info.first)].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
     }
-    for (auto ptr = dbMap[1][string(info.second)].head; ptr; ptr = ptr->next) {
+    for (auto ptr = dbMap2[string(info.second)].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
     }
-    for (auto ptr = dbMap[2][string(info.third)].head; ptr; ptr = ptr->next) {
+    for (auto ptr = dbMap3[string(info.third)].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
     }
-    for (auto ptr = dbMap[3][string(info.fourth)].head; ptr; ptr = ptr->next) {
+    for (auto ptr = dbMap4[string(info.fourth)].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);
     }
-    for (auto ptr = dbMap[4][string(info.fifth)].head; ptr; ptr = ptr->next) {
+    for (auto ptr = dbMap5[string(info.fifth)].head; ptr; ptr = ptr->next) {
         int cIdx = ptr->data;
         int socre = get_score(db[cIdx].info, info);
         ret = max(ret, socre);

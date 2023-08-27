@@ -1,5 +1,5 @@
 #if 0
-// STL xxx ms
+// [TC = 50]  Brue force 160,544 ms
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
