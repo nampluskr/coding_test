@@ -1,6 +1,10 @@
 ## [STL] Hash Chaining for Strings
 
 ```cpp
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <vector>
 #include <string>
 #include <unordered_map>
@@ -10,20 +14,22 @@ using namespace std;
 #define MAXL        11
 
 struct User {
-    string userID;
+    char userID[MAXL];
     int point;
+    User() { strcpy(userID, ""); point = 0; }
+    User(const char _userID[], int _point) { strcpy(userID, _userID); point = _point; }
 };
 
 unordered_map<string, int> userMap;
 vector<User> users;
 int userCnt;
 
-int get_userIndex(string userID) {
+int get_userIndex(const char userID[]) {
     int uIdx;
-    auto ret = userMap.find(userID);
+    auto ret = userMap.find(string(userID));
     if (ret == userMap.end()) {
         uIdx = userCnt;
-        userMap.emplace(userID, uIdx);
+        userMap.emplace(string(userID), uIdx);
         userCnt += 1;
     }
     else { uIdx = ret->second; }
@@ -36,7 +42,7 @@ void init() {
     userCnt = 0;
 }
 
-void add(string userID, int point) {
+void add(const char userID[], int point) {
     int uIdx = get_userIndex(userID);
     users[uIdx] = { userID, point };
 }
@@ -59,7 +65,10 @@ int main()
 ## [Manual] Hash Chaining for Strings
 
 ```cpp
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <stdio.h>
 #include <string.h>
 
@@ -78,41 +87,54 @@ struct User {
 User users[NUM_USERS];
 int userCnt;
 
-struct UnorderedMap_Str {
+template<typename Type>
+struct LinkedList {
     struct ListNode {
-        char key[MAXL];
-        int value;
+        Type data;
         ListNode* next;
     };
-    ListNode heap[NUM_USERS];
-    int heapSize;
-    ListNode* table[MAX_TABLE];
+    ListNode* head = nullptr;
+    ListNode* tail = nullptr;
 
-    void clear() { heapSize = 0; }
-    int hash(const char key[]) {
+    void clear() { head = nullptr; tail = nullptr; }
+    void push_back(const Type& data) {
+        ListNode* node = new ListNode({ data, nullptr });
+        if (head == nullptr) { head = node; tail = node; }
+        else { tail->next = node; tail = node; }
+    }
+};
+
+struct UnorderedMap_Str {
+    struct Data {
+        char key[MAXL];
+        int value;
+        Data(const char _key[], int _value) { strcpy(key, _key); value = _value; }
+    };
+    LinkedList<Data> table[MAX_TABLE];
+
+    unsigned long hash(const char str[]) {
         unsigned long hash = 5381;
         int c;
-
-        while (c = *key++) {
+        while (c = *str++) {
             hash = (((hash << 5) + hash) + c) % MAX_TABLE;
         }
         return hash % MAX_TABLE;
     }
+    void clear() {
+        for (int i = 0; i < MAX_TABLE; i++) { table[i].clear(); }
+    }
     int find(const char key[]) {
         int hashkey = hash(key);
-        for (auto node = table[hashkey]; node; node = node->next)
-            if (strcmp(node->key, key) == 0)
-                return node->value;
+        for (auto node = table[hashkey].head; node; node = node->next) {
+            auto data = node->data;
+            if (strcmp(data.key, key) == 0)
+                return data.value;
+        }
         return -1;
     }
     void emplace(const char key[], int value) {
         int hashkey = hash(key);
-        strcpy(heap[heapSize].key, key);
-        heap[heapSize].value = value;
-        heap[heapSize].next = table[hashkey];
-
-        table[hashkey] = &heap[heapSize];
-        heapSize += 1;
+        table[hashkey].push_back({ key, value });
     }
 };
 UnorderedMap_Str userMap;
@@ -136,7 +158,7 @@ void add(const char userID[], int point) {
 
 void init() {
     userMap.clear();
-    for (int i = 0; i < NUM_USERS; i++) { users[i] = { "", 0 }; }
+    for (int i = 0; i < NUM_USERS; i++) { users[i] = {}; }
     userCnt = 0;
 }
 

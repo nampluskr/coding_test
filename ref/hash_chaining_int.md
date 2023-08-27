@@ -70,32 +70,46 @@ struct User {
 User users[NUM_USERS];
 int userCnt;
 
-struct UnorderedMap_Int {
+template<typename Type>
+struct LinkedList {
     struct ListNode {
-        int key;
-        int value;
+        Type data;
         ListNode* next;
     };
-    ListNode heap[NUM_USERS];
-    int hrp;
-    ListNode* table[MAX_TABLE];
+    ListNode* head = nullptr;
+    ListNode* tail = nullptr;
 
-    void clear() { hrp = 0; }
-    int hash(int key) {
-        return key % MAX_TABLE;
+    void clear() { head = nullptr; tail = nullptr; }
+    void push_back(const Type& data) {
+        ListNode* node = new ListNode({ data, nullptr });
+        if (head == nullptr) { head = node; tail = node; }
+        else { tail->next = node; tail = node; }
+    }
+};
+
+struct UnorderedMap_Int {
+    struct Data {
+        int key;
+        int value;
+    };
+    LinkedList<Data> table[MAX_TABLE];
+
+    int hash(int key) { return key % MAX_TABLE; }
+    void clear() {
+        for (int i = 0; i < MAX_TABLE; i++) { table[i].clear(); }
     }
     int find(int key) {
         int hashkey = hash(key);
-        for (auto node = table[hashkey]; node; node = node->next)
-            if (node->key == key)
-                return node->value;
+        for (auto node = table[hashkey].head; node; node = node->next) {
+            auto data = node->data;
+            if (data.key == key)
+                return data.value;
+        }
         return -1;
     }
     void emplace(int key, int value) {
         int hashkey = hash(key);
-        heap[hrp] = { key, value, table[hashkey] };
-        table[hashkey] = &heap[hrp];
-        hrp += 1;
+        table[hashkey].push_back({ key, value });
     }
 };
 UnorderedMap_Int userMap;
