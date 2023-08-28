@@ -1,54 +1,57 @@
 ## [STL] Hash Chaining for Integers
 
 ```cpp
+#include <stdio.h>
 #include <vector>
 #include <unordered_map>
 using namespace std;
 
-#define NUM_USERS   100
+#define NUM_USERS   101
+#define MAX_TABLE   7007
 
 struct User {
-    int userID;
-    int point;
+    int x;
+    int y;
 };
-
-unordered_map<int, int> userMap;
-vector<User> users;
+User users[NUM_USERS];
 int userCnt;
 
-int get_userIndex(int userID) {
+unordered_map<int, vector<int>> userList;
+unordered_map<int, int> userMap;
+
+int get_userIndex(int key) {
     int uIdx;
-    auto ret = userMap.find(userID);
+    auto ret = userMap.find(key);
     if (ret == userMap.end()) {
         uIdx = userCnt;
-        userMap.emplace(userID, uIdx);
+        userMap.emplace(key, uIdx);
         userCnt += 1;
     }
     else { uIdx = ret->second; }
     return uIdx;
 }
 
-void init() {
-    userMap.clear();
-    users.clear();  users.resize(NUM_USERS);
-    userCnt = 0;
-}
-
-void add(int userID, int point) {
-    int uIdx = get_userIndex(userID);
-    users[uIdx] = { userID, point };
-}
-
 int main()
 {
-    init();
-    add(1000, 10);
-    add(2000, 20);
-    add(3000, 30);
+    // Hash Chaining
+    userList.clear();
 
-    printf("(%d, %d)\n", 1000, get_userIndex(1000));
-    printf("(%d, %d)\n", 2000, get_userIndex(2000));
-    printf("(%d, %d)\n", 3000, get_userIndex(3000));
+    //userList.emplace(11111, 10);
+    userList[11111].push_back(10);
+    userList[11111].push_back(20);
+    userList[11111].push_back(30);
+
+    for (auto uIdx: userList[11111]) {
+        printf("%d\n", uIdx);
+    }
+
+    // Hash Mapping
+    userMap.clear();
+
+    printf("(%d, %d)\n", 11111, get_userIndex(11111));
+    printf("(%d, %d)\n", 22222, get_userIndex(22222));
+    printf("(%d, %d)\n", 33333, get_userIndex(33333));
+    printf("(%d, %d)\n", 44444, userMap[44444]);
 
     return 0;
 }
@@ -59,14 +62,13 @@ int main()
 ```cpp
 #include <stdio.h>
 
-#define NUM_USERS   100
+#define NUM_USERS   101
 #define MAX_TABLE   7007
 
 struct User {
-    int userID;
-    int point;
+    int x;
+    int y;
 };
-
 User users[NUM_USERS];
 int userCnt;
 
@@ -87,16 +89,45 @@ struct LinkedList {
     }
 };
 
-struct UnorderedMap_Int {
+// unordered_map<int, vector<Type>> userList
+template<typename Type>
+struct HashChain {
+    LinkedList<Type> table[MAX_TABLE];
+
+    int hash(int key) {
+        return key % MAX_TABLE;
+    }
+    void clear() {
+        for (int i = 0; i < MAX_TABLE; i++) { table[i].clear(); }
+    }
+    //void emplace(int key, Type value) {
+    //    int hashkey = hash(key);
+    //    table[hashkey].push_back(value);
+    //}
+    LinkedList<Type>& operator[](int key) {
+        int hashkey = hash(key);
+        return table[hashkey];
+    }
+};
+HashChain<int> userList;
+
+// unordered_map<int, int> userMap;
+struct HashMap {
     struct Data {
         int key;
         int value;
     };
     LinkedList<Data> table[MAX_TABLE];
 
-    int hash(int key) { return key % MAX_TABLE; }
+    int hash(int key) {
+        return key % MAX_TABLE;
+    }
     void clear() {
         for (int i = 0; i < MAX_TABLE; i++) { table[i].clear(); }
+    }
+    void emplace(int key, int value) {
+        int hashkey = hash(key);
+        table[hashkey].push_back({ key, value });
     }
     int find(int key) {
         int hashkey = hash(key);
@@ -107,46 +138,45 @@ struct UnorderedMap_Int {
         }
         return -1;
     }
-    void emplace(int key, int value) {
-        int hashkey = hash(key);
-        table[hashkey].push_back({ key, value });
+    int operator[](int key) {
+        return find(key);
     }
 };
-UnorderedMap_Int userMap;
+HashMap userMap;
 
-int get_userIndex(int userID) {
+int get_userIndex(int key) {
     int uIdx;
-    auto ret = userMap.find(userID);
+    auto ret = userMap.find(key);
     if (ret == -1) {
         uIdx = userCnt;
-        userMap.emplace(userID, uIdx);
+        userMap.emplace(key, uIdx);
         userCnt += 1;
     }
     else { uIdx = ret; }
     return uIdx;
 }
 
-void add(int userID, int point) {
-    int uIdx = get_userIndex(userID);
-    users[uIdx] = { userID, point };
-}
-
-void init() {
-    userMap.clear();
-    for (int i = 0; i < NUM_USERS; i++) { users[i] = {}; }
-    userCnt = 0;
-}
-
 int main()
 {
-    init();
-    add(1000, 10);
-    add(2000, 20);
-    add(3000, 30);
+    // Hash Chaining
+    userList.clear();
 
-    printf("(%d, %d)\n", 1000, get_userIndex(1000));
-    printf("(%d, %d)\n", 2000, get_userIndex(2000));
-    printf("(%d, %d)\n", 3000, get_userIndex(3000));
+    //userList.emplace(11111, 10);
+    userList[11111].push_back(10);
+    userList[11111].push_back(20);
+    userList[11111].push_back(30);
+
+    for (auto node = userList[11111].head; node; node = node->next) {
+        printf("%d\n", node->data);
+    }
+
+    // Hash Mapping
+    userMap.clear();
+
+    printf("(%d, %d)\n", 11111, get_userIndex(11111));
+    printf("(%d, %d)\n", 22222, get_userIndex(22222));
+    printf("(%d, %d)\n", 33333, get_userIndex(33333));
+    printf("(%d, %d)\n", 44444, userMap[44444]);
 
     return 0;
 }
