@@ -6,57 +6,58 @@
 #endif
 
 #include <vector>
-#include <string>
 #include <unordered_map>
+#include <string>
+#include <string.h>
+#include <stdio.h>
 using namespace std;
 
-#define NUM_USERS   100
-#define MAXL        11
+#define NUM_USERS   101
+#define MAX_TABLE   7007
 
 struct User {
-    char userID[MAXL];
-    int point;
-    User() { strcpy(userID, ""); point = 0; }
-    User(const char _userID[], int _point) { strcpy(userID, _userID); point = _point; }
+    int x;
+    int y;
 };
-
-unordered_map<string, int> userMap;
-vector<User> users;
+User users[NUM_USERS];
 int userCnt;
 
-int get_userIndex(const char userID[]) {
+unordered_map<string, vector<int>> userList;
+unordered_map<string, int> userMap;
+
+int get_userIndex(const char key[]) {
     int uIdx;
-    auto ret = userMap.find(string(userID));
+    auto ret = userMap.find(key);
     if (ret == userMap.end()) {
         uIdx = userCnt;
-        userMap.emplace(string(userID), uIdx);
+        userMap.emplace(key, uIdx);
         userCnt += 1;
     }
     else { uIdx = ret->second; }
     return uIdx;
 }
 
-void init() {
-    userMap.clear();
-    users.clear();  users.resize(NUM_USERS);
-    userCnt = 0;
-}
-
-void add(const char userID[], int point) {
-    int uIdx = get_userIndex(userID);
-    users[uIdx] = { userID, point };
-}
-
 int main()
 {
-    init();
-    add("aaaaa", 10);
-    add("bbbbb", 20);
-    add("ccccc", 30);
+    // Hash Chaining
+    userList.clear();
 
-    printf("(%s, %d)\n", "aaaaa", get_userIndex("aaaaa"));
-    printf("(%s, %d)\n", "bbbbb", get_userIndex("bbbbb"));
-    printf("(%s, %d)\n", "ccccc", get_userIndex("ccccc"));
+    //userList.emplace("aaa", 10);
+    userList["aaa"].push_back(10);
+    userList["aaa"].push_back(20);
+    userList["aaa"].push_back(30);
+
+    for (auto uIdx: userList["aaa"]) {
+        printf("%d\n", uIdx);
+    }
+
+    // Hash Mapping
+    userMap.clear();
+
+    printf("(%s, %d)\n", "aaa", get_userIndex("aaa"));
+    printf("(%s, %d)\n", "bbb", get_userIndex("bbb"));
+    printf("(%s, %d)\n", "ccc", get_userIndex("ccc"));
+    printf("(%s, %d)\n", "ddd", userMap["ddd"]);
 
     return 0;
 }
@@ -69,21 +70,16 @@ int main()
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <stdio.h>
 #include <string.h>
+#include <stdio.h>
 
-#define NUM_USERS   100
-#define MAXL        11
+#define NUM_USERS   101
 #define MAX_TABLE   7007
 
 struct User {
-    char userID[MAXL];
-    int point;
-
-    User() { strcpy(userID, ""); point = 0; }
-    User(const char _userID[], int _point) { strcpy(userID, _userID); point = _point; }
+    int x;
+    int y;
 };
-
 User users[NUM_USERS];
 int userCnt;
 
@@ -104,11 +100,40 @@ struct LinkedList {
     }
 };
 
-struct UnorderedMap_Str {
+// unordered_map<string, vector<Type>> userList;
+template<typename Type>
+struct HashChain {
+    LinkedList<Type> table[MAX_TABLE];
+
+    unsigned long hash(const char str[]) {
+        unsigned long hash = 5381;
+        int c;
+        while (c = *str++) {
+            hash = (((hash << 5) + hash) + c) % MAX_TABLE;
+        }
+        return hash % MAX_TABLE;
+    }
+    void clear() {
+        for (int i = 0; i < MAX_TABLE; i++) { table[i].clear(); }
+    }
+    //void emplace(const char key[], Type value) {
+    //    int hashkey = hash(key);
+    //    table[hashkey].push_back(value);
+    //}
+    LinkedList<Type>& operator[](const char key[]) {
+        int hashkey = hash(key);
+        return table[hashkey];
+    }
+};
+HashChain<int> userList;
+
+// unordered_map<string, int> userMap;
+struct HashMap {
     struct Data {
-        char key[MAXL];
+        char key[11];
         int value;
-        Data(const char _key[], int _value) { strcpy(key, _key); value = _value; }
+        Data() { strcpy(this->key, ""); this->value = 0; }
+        Data(const char key[], int value) { strcpy(this->key, key); this->value = value; }
     };
     LinkedList<Data> table[MAX_TABLE];
 
@@ -123,6 +148,10 @@ struct UnorderedMap_Str {
     void clear() {
         for (int i = 0; i < MAX_TABLE; i++) { table[i].clear(); }
     }
+    void emplace(const char key[], int value) {
+        int hashkey = hash(key);
+        table[hashkey].push_back({ key, value });
+    }
     int find(const char key[]) {
         int hashkey = hash(key);
         for (auto node = table[hashkey].head; node; node = node->next) {
@@ -132,46 +161,45 @@ struct UnorderedMap_Str {
         }
         return -1;
     }
-    void emplace(const char key[], int value) {
-        int hashkey = hash(key);
-        table[hashkey].push_back({ key, value });
+    int operator[](const char key[]) {
+        return find(key);
     }
 };
-UnorderedMap_Str userMap;
+HashMap userMap;
 
-int get_userIndex(const char userID[]) {
+int get_userIndex(const char key[]) {
     int uIdx;
-    auto ret = userMap.find(userID);
+    auto ret = userMap.find(key);
     if (ret == -1) {
         uIdx = userCnt;
-        userMap.emplace(userID, uIdx);
+        userMap.emplace(key, uIdx);
         userCnt += 1;
     }
     else { uIdx = ret; }
     return uIdx;
 }
 
-void add(const char userID[], int point) {
-    int uIdx = get_userIndex(userID);
-    users[uIdx] = { userID, point };
-}
-
-void init() {
-    userMap.clear();
-    for (int i = 0; i < NUM_USERS; i++) { users[i] = {}; }
-    userCnt = 0;
-}
-
 int main()
 {
-    init();
-    add("aaaaa", 10);
-    add("bbbbb", 20);
-    add("ccccc", 30);
+    // Hash Chaining
+    userList.clear();
 
-    printf("(%s, %d)\n", "aaaaa", get_userIndex("aaaaa"));
-    printf("(%s, %d)\n", "bbbbb", get_userIndex("bbbbb"));
-    printf("(%s, %d)\n", "ccccc", get_userIndex("ccccc"));
+    //userList.emplace("aaa", 10);
+    userList["aaa"].push_back(10);
+    userList["aaa"].push_back(20);
+    userList["aaa"].push_back(30);
+
+    for (auto node = userList["aaa"].head; node; node=node->next) {
+        printf("%d\n", node->data);
+    }
+
+    // Hash Mapping
+    userMap.clear();
+
+    printf("(%s, %d)\n", "aaa", get_userIndex("aaa"));
+    printf("(%s, %d)\n", "bbb", get_userIndex("bbb"));
+    printf("(%s, %d)\n", "ccc", get_userIndex("ccc"));
+    printf("(%s, %d)\n", "ddd", userMap["ddd"]);
 
     return 0;
 }
