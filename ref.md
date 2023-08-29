@@ -38,3 +38,48 @@ int abs(int x) { return (x > 0)? a: -a; }
 ```cpp
 int ceil(double x) { return -(int)(-x); }
 ```
+
+## 문자열 함수
+
+```cpp
+int mstrlen(const char a[]) {
+    int i = 0;
+    while (a[i] != '\0')
+        i++;
+    return i;
+}
+```
+
+```cpp
+int mstrcmp(const char a[], const char b[]) {
+    int i;
+    for (i = 0; a[i] != '\0'; i++)
+        if (a[i] != b[i])
+            return a[i] - b[i];
+    return a[i] - b[i];
+}
+
+int mstrncmp(const char a[], const char b[], int len) {
+    for (int i = 0; i < len; i++)
+        if (a[i] != b[i])
+            return a[i] - b[i];
+    return 0;
+}
+```
+
+```cpp
+void mstrcpy(char dest[], const char src[]) {
+    int i = 0;
+    while (src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+    dest[i] = src[i];
+}
+
+void mstrncpy(char dest[], const char src[], int len) {
+    for (int i = 0; i < len; i++)
+        dest[i] = src[i];
+    dest[len] = '\0';
+}
+```

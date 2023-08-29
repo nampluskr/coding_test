@@ -1,8 +1,8 @@
-﻿#if 0
-// Manual 1251 ms (WS) / STL 1777 ms (WS)
-#ifndef _CRT_SECURE_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-#endif
+﻿#if 1
+// Manual 845 ms / STL 1135 ms
+//#ifndef _CRT_SECURE_NO_WARNINGS
+//#define _CRT_SECURE_NO_WARNINGS
+//#endif
 
 #include <string.h>
 

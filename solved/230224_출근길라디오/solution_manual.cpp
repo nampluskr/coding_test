@@ -12,7 +12,7 @@ struct LinkedList {
     ListNode* head = nullptr;
     ListNode* tail = nullptr;
 
-    void init() { head = nullptr; tail = nullptr; }
+    void clear() { head = nullptr; tail = nullptr; }
     void push_back(const Type& data) {
         ListNode* node = new ListNode({ data, nullptr });
         if (head == nullptr) { head = node; tail = node; }
