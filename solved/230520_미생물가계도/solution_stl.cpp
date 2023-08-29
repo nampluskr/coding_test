@@ -1,4 +1,4 @@
-﻿#if 0
+﻿#if 1
 // STL 1042 ms: Tree (LCA), Partition (Range update + Point query)
 #include <vector>
 #include <unordered_map>
