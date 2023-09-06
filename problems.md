@@ -13,7 +13,7 @@
 - [ ] 220416_문명 (2D)
 
 ## 타임스탬프: 사전 업데이트
-- [X] [230414_뉴스알림](https://github.com/nampluskr/coding_test/tree/main/solved/230414_%EB%89%B4%EC%8A%A4%EC%95%8C%EB%A6%BC)
+- [X] [230414_뉴스알림](https://github.com/nampluskr/coding_test/tree/main/solved/230414_%EB%89%B4%EC%8A%A4%EC%95%8C%EB%A6%BC) : Manual 973 ms / STL 706 ms
 - [ ] 221217_직선왕국
 - [ ] 220115_배달라이더
 - [ ] 220708_주차장 (우큐)
