@@ -23,20 +23,33 @@
 ## 수학함수
 
 ```cpp
-int min(int a, int b) { return (a < b)? a: b; }
-int max(int a, int b) { return (a > b)? a: b; }
+int min(int x, int y) { return (x < y)? x: y; }
+int max(int x, int y) { return (x > y)? x: y; }
 ```
 
 ```cpp
-void swap(int& a, int& b) { int temp = a; a = b; b = temp; }
+void swap(int& x, int& y) { int temp = x; x = y; y = temp; }
 ```
 
 ```cpp
-int abs(int x) { return (x > 0)? a: -a; }
+int abs(int x) { return (x > 0)? x: -x; }
 ```
 
 ```cpp
 int ceil(double x) { return -(int)(-x); }
+```
+
+```cpp
+int sqrt(int n) {
+    int x = n;
+    int y = (x + 1) / 2;
+ 
+    while (y < x) {
+        x = y;
+        y = (x + n / x) / 2;
+    }
+    return x;
+}
 ```
 
 ## 문자열 함수
