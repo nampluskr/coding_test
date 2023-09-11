@@ -1,28 +1,17 @@
 #if 1
-// Bruet force 1403 ms
+// (TC = 5) Manual-2 47 ms / Manual-1 50 ms / STL-2 61 ms / STL-1 88 ms / Brute force 646 ms
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <string.h>
+#include <cstring>
+#include <queue>
+using namespace std;
 
-#define NUM_USERS   500000
-#define LOGIN   0
-#define LOGOUT  1
-
-struct User {
-    char id[11];
-    char password[11];
-    int default_time;
-
-    int login_time;
-    int state;
-};
-User users[NUM_USERS];
-int userCnt;
-
-//////////////////////////////////////////////////////////////////////////////
-#define MAX_TABLE   50077
+#define NUM_ACCOUNTS    50000
+#define MAX_LENGTH      11
+#define LOGOUT          1
+#define MAX_TABLE       50007
 
 template<typename Type>
 struct LinkedList {
@@ -33,7 +22,7 @@ struct LinkedList {
     ListNode* head = nullptr;
     ListNode* tail = nullptr;
 
-    void init() { head = nullptr; tail = nullptr; }
+    void clear() { head = nullptr; tail = nullptr; }
     void push_back(const Type& data) {
         ListNode* node = new ListNode({ data, nullptr });
         if (head == nullptr) { head = node; tail = node; }
@@ -41,100 +30,176 @@ struct LinkedList {
     }
 };
 
-struct UnorderedMap {
+struct HashMap {
     struct Data {
-        char key[11];
+        char key[MAX_LENGTH];
         int value;
-        Data(const char _key[], int _value) { strcpy(key, _key); value = _value; }
-    };
-    LinkedList<Data> head[MAX_TABLE];
 
-    unsigned long hash(const char key[]) {
+        //Data() { strcpy(this->key, ""); this->value = 0; }
+        Data(const char key[], int value) { strcpy(this->key, key); this->value = value; }
+    };
+    LinkedList<Data> table[MAX_TABLE];
+
+    int hash(const char str[]) {
         unsigned long hash = 5381;
         int c;
-        while (c = *key++) {
+        while (c = *str++) {
             hash = (((hash << 5) + hash) + c) % MAX_TABLE;
         }
         return hash % MAX_TABLE;
     }
-    void clear() {
-        for (int i = 0; i < MAX_TABLE; i++) { head[i].init(); }
-    }
+    void clear() { for (int i = 0; i < MAX_TABLE; i++) table[i].clear(); }
     int find(const char key[]) {
         int hashkey = hash(key);
-        for (auto ptr = head[hashkey].head; ptr; ptr = ptr->next) {
-            auto data = ptr->data;
-            if (strcmp(data.key, key) == 0)
-                return data.value;
+        for (auto node = table[hashkey].head; node; node = node->next) {
+            if (strcmp(node->data.key, key) == 0)
+                return node->data.value;
         }
         return -1;
     }
     void emplace(const char key[], int value) {
         int hashkey = hash(key);
-        head[hashkey].push_back({ key, value });
+        table[hashkey].push_back({ key, value });
     }
 };
-UnorderedMap userMap;
 
-int get_userIndex(const char id[]) {
-    int uIdx;
-    int ret = userMap.find(id);
-    if (ret == -1) {
-        uIdx = userCnt;
-        userMap.emplace(id, uIdx);
-        userCnt += 1;
+//////////////////////////////////////////////////////////////////////////////
+
+struct Account {
+    char password[MAX_LENGTH];
+    int default_time;
+    int logout_time;
+    int state;
+};
+Account accounts[NUM_ACCOUNTS];
+int accountCnt;
+
+HashMap accountMap;
+int current_time;
+
+struct Data {
+    int aIdx;
+    int logout_time;
+    bool operator<(const Data& data) const { return logout_time > data.logout_time; }
+};
+
+#define MAX_SIZE 50000
+
+template<typename Type>
+struct PriorityQueue {
+    Type heap[MAX_SIZE];
+    int heapSize = 0;
+
+    void clear() { heapSize = 0; }
+    void push(const Type& data) {
+        heap[heapSize] = data;
+        int current = heapSize;
+        while (current > 0 && heap[(current - 1) / 2] < heap[current])
+        {
+            Type temp = heap[(current - 1) / 2];
+            heap[(current - 1) / 2] = heap[current];
+            heap[current] = temp;
+            current = (current - 1) / 2;
+        }
+        heapSize = heapSize + 1;
     }
-    else { uIdx = ret; }
-    return uIdx;
+    void pop() {
+        heapSize = heapSize - 1;
+        heap[0] = heap[heapSize];
+        int current = 0;
+
+        while (current * 2 + 1 < heapSize) {
+            int child;
+            if (current * 2 + 2 == heapSize) {
+                child = current * 2 + 1;
+            }
+            else {
+                child = heap[current * 2 + 2] < heap[current * 2 + 1] ? current * 2 + 1 : current * 2 + 2;
+            }
+            if (heap[child] < heap[current]) {
+                break;
+            }
+            Type temp = heap[current];
+            heap[current] = heap[child];
+            heap[child] = temp;
+            current = child;
+        }
+    }
+    Type top() { return heap[0]; }
+    bool empty() { return heapSize == 0; }
+};
+
+PriorityQueue<Data> logoutAccPQ;
+
+//////////////////////////////////////////////////////////////////////////////
+int get_accountIndex(const char id[]) {
+    int aIdx;
+    auto ret = accountMap.find(id);
+    if (ret == -1) {
+        aIdx = accountCnt;
+        accountMap.emplace(id, aIdx);
+        accountCnt += 1;
+    }
+    else { aIdx = ret; }
+    return aIdx;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void Init()
 {
-    for (int i = 0; i < NUM_USERS; i++) { users[i] = {}; }
-    userCnt = 0;
-    userMap.clear();
+    for (int i = 0; i < NUM_ACCOUNTS; i++) { accounts[i] = {}; }
+    accountCnt = 0;
+    accountMap.clear();
+    current_time = 0;
+
+    logoutAccPQ.clear();
+    //while (!logoutAccPQ.empty()) { logoutAccPQ.pop(); }
 }
 
-void NewAccount(char id[11], char password[11], int defaulttime)
+void NewAccount(char id[], char password[], int defaulttime)
 {
-    int uIdx = get_userIndex(id);
-    strcpy(users[uIdx].id, id);
-    strcpy(users[uIdx].password, password);
-    users[uIdx].default_time = defaulttime;
-    users[uIdx].login_time = defaulttime;
-    users[uIdx].state = LOGIN;
+    int aIdx = get_accountIndex(id);
+    strcpy(accounts[aIdx].password, password);
+    accounts[aIdx].default_time = defaulttime;
+
+    int logout_time = current_time + defaulttime;
+    accounts[aIdx].logout_time = logout_time;
+    logoutAccPQ.push({ aIdx, logout_time });
 }
 
-void Logout(char id[11])
+void Logout(char id[])
 {
-    int uIdx = get_userIndex(id);
-    if (users[uIdx].state == LOGIN) {
-        users[uIdx].state = LOGOUT;
-    }
+    int aIdx = get_accountIndex(id);
+    accounts[aIdx].state = LOGOUT;
 }
 
-void Connect(char id[11], char password[11])
+void Connect(char id[], char password[])
 {
-    int uIdx = get_userIndex(id);
-    //if (strcmp(users[uIdx].id, id) != 0) return;
-    if (strcmp(users[uIdx].password, password) != 0) return;
-    if (users[uIdx].state == LOGIN) {
-        users[uIdx].login_time = users[uIdx].default_time;
-    }
+    int aIdx = get_accountIndex(id);
+    if (strcmp(accounts[aIdx].password, password) != 0) return;
+    if (accounts[aIdx].state == LOGOUT) return;
+
+    int logout_time = current_time + accounts[aIdx].default_time;
+    accounts[aIdx].logout_time = logout_time;
+    logoutAccPQ.push({ aIdx, logout_time });
 }
 
 int Tick()
 {
-    int ret = 0;
-    for (int i = 0; i < userCnt; i++) {
-        if (users[i].state != LOGOUT) {
-            users[i].login_time -= 1;
+    current_time += 1;
 
-            if (users[i].login_time == 0) {
-                users[i].state = LOGOUT;
-                ret += 1;
-            }
+    int ret = 0;
+    auto& Q = logoutAccPQ;
+
+    while (!Q.empty() && Q.top().logout_time <= current_time) {
+        auto data = Q.top(); Q.pop();
+        int aIdx = data.aIdx;
+
+        if (accounts[aIdx].logout_time != current_time) continue;
+
+        if (accounts[aIdx].state != LOGOUT) {
+            accounts[aIdx].state = LOGOUT;
+            ret += 1;
         }
     }
     return ret;

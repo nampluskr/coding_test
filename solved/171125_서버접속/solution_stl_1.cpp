@@ -1,5 +1,5 @@
 #if 0
-// (TC = 5) Brute force 646 ms
+// (TC = 5) STL-1 88 ms / Brute force 646 ms
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -26,6 +26,8 @@ int accountCnt;
 unordered_map<string, int> accountMap;
 int current_time;
 
+unordered_map<int, vector<int>> logoutAccList;
+
 //////////////////////////////////////////////////////////////////////////////
 int get_accountIndex(const char id[]) {
     int aIdx;
@@ -46,6 +48,7 @@ void Init()
     accountCnt = 0;
     accountMap.clear();
     current_time = 0;
+    logoutAccList.clear();
 }
 
 void NewAccount(char id[], char password[], int defaulttime)
@@ -54,6 +57,8 @@ void NewAccount(char id[], char password[], int defaulttime)
     strcpy(accounts[aIdx].password, password);
     accounts[aIdx].default_time = defaulttime;
     accounts[aIdx].logout_time = current_time + defaulttime;
+
+    logoutAccList[accounts[aIdx].logout_time].push_back(aIdx);
 }
 
 void Logout(char id[])
@@ -69,6 +74,7 @@ void Connect(char id[], char password[])
     if (accounts[aIdx].state == LOGOUT) return;
 
     accounts[aIdx].logout_time = current_time + accounts[aIdx].default_time;
+    logoutAccList[accounts[aIdx].logout_time].push_back(aIdx);
 }
 
 int Tick()
@@ -76,14 +82,13 @@ int Tick()
     current_time += 1;
 
     int ret = 0;
-    for (int i = 0; i < accountCnt; i++) {
-        if (accounts[i].logout_time != current_time) continue;
+    for (int aIdx : logoutAccList[current_time]) {
+        if (accounts[aIdx].logout_time != current_time) continue;
 
-        if (accounts[i].state != LOGOUT) {
-            accounts[i].state = LOGOUT;
+        if (accounts[aIdx].state != LOGOUT) {
+            accounts[aIdx].state = LOGOUT;
             ret += 1;
         }
-
     }
     return ret;
 }

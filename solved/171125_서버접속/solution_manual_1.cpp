@@ -1,37 +1,15 @@
 #if 0
-// Bruet force 2168 ms
+// (TC = 5) Manual-1 50 ms / STL-1 88 ms / Brute force 646 ms
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <string.h>
+#include <cstring>
 
-#define NUM_USERS   500000
-#define LOGIN   0
-#define LOGOUT  1
-
-struct User {
-    char id[11];
-    char password[11];
-    int default_time;
-
-    int login_time;
-    int state;
-};
-User users[NUM_USERS];
-int userCnt;
-
-//////////////////////////////////////////////////////////////////////////////
-#define MAX_TABLE   50007
-
-unsigned long hashfunc(const char key[]) {
-    unsigned long hash = 5381;
-    int c;
-    while (c = *key++) {
-        hash = (((hash << 5) + hash) + c) % MAX_TABLE;
-    }
-    return hash % MAX_TABLE;
-}
+#define NUM_ACCOUNTS    50000
+#define MAX_LENGTH      11
+#define LOGOUT          1
+#define MAX_TABLE       50007
 
 template<typename Type>
 struct LinkedList {
@@ -42,7 +20,7 @@ struct LinkedList {
     ListNode* head = nullptr;
     ListNode* tail = nullptr;
 
-    void init() { head = nullptr; tail = nullptr; }
+    void clear() { head = nullptr; tail = nullptr; }
     void push_back(const Type& data) {
         ListNode* node = new ListNode({ data, nullptr });
         if (head == nullptr) { head = node; tail = node; }
@@ -50,88 +28,127 @@ struct LinkedList {
     }
 };
 
-struct Data {
-    char key[11];
-    int value;
-    Data(const char _key[], int _value) { strcpy(key, _key); value = _value; }
+template<typename Type>
+struct HashChain {
+    LinkedList<Type> table[MAX_TABLE];
+
+    void clear() { for (int i = 0; i < MAX_TABLE; i++) table[i].clear(); }
+    LinkedList<Type>& operator[](int key) {
+        int hashkey = key % MAX_TABLE;
+        return table[hashkey];
+    }
 };
 
-LinkedList<Data> head[MAX_TABLE];
+struct HashMap {
+    struct Data {
+        char key[MAX_LENGTH];
+        int value;
 
-void emplace(const char key[], int value) {
-    int hashkey = hashfunc(key);
-    head[hashkey].push_back({ key, value });
-}
+        //Data() { strcpy(this->key, ""); this->value = 0; }
+        Data(const char key[], int value) { strcpy(this->key, key); this->value = value; }
+    };
+    LinkedList<Data> table[MAX_TABLE];
 
-int find(const char key[]) {
-    int hashkey = hashfunc(key);
-    for (auto ptr = head[hashkey].head; ptr; ptr = ptr->next) {
-        auto data = ptr->data;
-        if (strcmp(data.key, key) == 0)
-            return data.value;
+    int hash(const char str[]) {
+        unsigned long hash = 5381;
+        int c;
+        while (c = *str++) {
+            hash = (((hash << 5) + hash) + c) % MAX_TABLE;
+        }
+        return hash % MAX_TABLE;
     }
-    return -1;
-}
+    void clear() { for (int i = 0; i < MAX_TABLE; i++) table[i].clear(); }
+    int find(const char key[]) {
+        int hashkey = hash(key);
+        for (auto node = table[hashkey].head; node; node = node->next) {
+            if (strcmp(node->data.key, key) == 0)
+                return node->data.value;
+        }
+        return -1;
+    }
+    void emplace(const char key[], int value) {
+        int hashkey = hash(key);
+        table[hashkey].push_back({ key, value });
+    }
+};
 
-int get_userIndex(const char id[]) {
-    int uIdx;
-    int ret = find(id);
+//////////////////////////////////////////////////////////////////////////////
+
+struct Account {
+    char password[MAX_LENGTH];
+    int default_time;
+    int logout_time;
+    int state;
+};
+Account accounts[NUM_ACCOUNTS];
+int accountCnt;
+
+HashMap accountMap;
+int current_time;
+
+HashChain<int> logoutAccList;
+
+//////////////////////////////////////////////////////////////////////////////
+int get_accountIndex(const char id[]) {
+    int aIdx;
+    auto ret = accountMap.find(id);
     if (ret == -1) {
-        uIdx = userCnt;
-        emplace(id, uIdx);
-        userCnt += 1;
+        aIdx = accountCnt;
+        accountMap.emplace(id, aIdx);
+        accountCnt += 1;
     }
-    else { uIdx = ret; }
-    return uIdx;
+    else { aIdx = ret; }
+    return aIdx;
 }
 
 //////////////////////////////////////////////////////////////////////////////
 void Init()
 {
-    for (int i = 0; i < NUM_USERS; i++) { users[i] = {}; }
-    userCnt = 0;
-
-    for (int i = 0; i < MAX_TABLE; i++) { head[i].init(); }
+    for (int i = 0; i < NUM_ACCOUNTS; i++) { accounts[i] = {}; }
+    accountCnt = 0;
+    accountMap.clear();
+    current_time = 0;
+    logoutAccList.clear();
 }
 
-void NewAccount(char id[11], char password[11], int defaulttime) {
-    int uIdx = get_userIndex(id);
-
-    strcpy(users[uIdx].id, id);
-    strcpy(users[uIdx].password, password);
-    users[uIdx].default_time = defaulttime;
-    users[uIdx].login_time = defaulttime;
-    users[uIdx].state = LOGIN;
-}
-
-void Logout(char id[11]) {
-    int uIdx = get_userIndex(id);
-    if (users[uIdx].state == LOGIN) {
-        users[uIdx].state = LOGOUT;
-    }
-}
-
-void Connect(char id[11], char password[11])
+void NewAccount(char id[], char password[], int defaulttime)
 {
-    int uIdx = get_userIndex(id);
-    //if (strcmp(users[uIdx].id, id) != 0) return;
-    if (strcmp(users[uIdx].password, password) != 0) return;
-    if (users[uIdx].state == LOGIN) {
-        users[uIdx].login_time = users[uIdx].default_time;
-    }
+    int aIdx = get_accountIndex(id);
+    strcpy(accounts[aIdx].password, password);
+    accounts[aIdx].default_time = defaulttime;
+    accounts[aIdx].logout_time = current_time + defaulttime;
+
+    logoutAccList[accounts[aIdx].logout_time].push_back(aIdx);
+}
+
+void Logout(char id[])
+{
+    int aIdx = get_accountIndex(id);
+    accounts[aIdx].state = LOGOUT;
+}
+
+void Connect(char id[], char password[])
+{
+    int aIdx = get_accountIndex(id);
+    if (strcmp(accounts[aIdx].password, password) != 0) return;
+    if (accounts[aIdx].state == LOGOUT) return;
+
+    accounts[aIdx].logout_time = current_time + accounts[aIdx].default_time;
+    logoutAccList[accounts[aIdx].logout_time].push_back(aIdx);
 }
 
 int Tick()
 {
-    int ret = 0;
-    for (int i = 0; i < userCnt; i++) {
-        if (users[i].state != LOGOUT) {
-            users[i].login_time -= 1;
+    current_time += 1;
 
-            if (users[i].login_time == 0) {
-                users[i].state = LOGOUT;
-                ret += 1;
-            }
+    int ret = 0;
+    for (auto node = logoutAccList[current_time].head; node; node = node->next) {
+        int aIdx = node->data;
+        if (accounts[aIdx].logout_time != current_time) continue;
+
+        if (accounts[aIdx].state != LOGOUT) {
+            accounts[aIdx].state = LOGOUT;
+            ret += 1;
         }
     }
     return ret;

@@ -23,6 +23,7 @@
 - [ ] 210813_클라우드서비스
 - [ ] 210619_수강신청 (우큐)
 - [ ] 210417_클러스터
+- [X] [171125_서버접속](https://github.com/nampluskr/coding_test/tree/main/solved/171125_%EC%84%9C%EB%B2%84%EC%A0%91%EC%86%8D) : (TC = 5) Manual-2 47 ms / Manual-1 50 ms / STL-2 61 ms / STL-1 88 ms / Brute force 646 ms
 
 ## 우선순위큐 - 데이터 변경 (조건별 사전 정렬)
 
