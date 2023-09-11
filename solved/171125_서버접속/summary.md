@@ -21,7 +21,9 @@ unordered_map<int, vector<int>> logoutAccList;
 struct Data {
     int aIdx;
     int logout_time;
-    bool operator<(const Data& data) const { return logout_time > data.logout_time; }
+    bool operator<(const Data& data) const {
+        return logout_time > data.logout_time;
+    }
 };
 priority_queue<Data> logoutAccPQ;
 ```
