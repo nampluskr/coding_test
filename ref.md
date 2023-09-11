@@ -39,16 +39,17 @@ int abs(int x) { return (x > 0)? x: -x; }
 int ceil(double x) { return -(int)(-x); }
 ```
 
+Newton's Method: $x_{n+1} = (x_n + n / x_n) / 2$
 ```cpp
-unsigned sqrt(const unsigned n) {
-    unsigned x = n;
-    unsigned y = (x + 1) / 2;
+double sqrt(const double n) {
+    double x1 = n;
+    double x2 = (x1 + n / x1) / 2;
  
-    while (y < x) {
-        x = y;
-        y = (x + n / x) / 2;
+    while (x1 - x2 > 0.001) {
+        x1 = x2;
+        x2 = (x1 + n / x1) / 2;
     }
-    return x;
+    return x2;
 }
 ```
 
