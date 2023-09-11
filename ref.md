@@ -40,9 +40,9 @@ int ceil(double x) { return -(int)(-x); }
 ```
 
 ```cpp
-int sqrt(int n) {
-    int x = n;
-    int y = (x + 1) / 2;
+unsigned sqrt(const unsigned n) {
+    unsigned x = n;
+    unsigned y = (x + 1) / 2;
  
     while (y < x) {
         x = y;
