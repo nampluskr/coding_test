@@ -1,17 +1,20 @@
-#if 0
-// [±¸°£ÇÕ] point update / range query
+#if 1
+// [STL] point update / range query
 #include <vector>
 #include <cmath>
 using namespace std;
+
+int num_values;
+int bucket_size;        // sqrt(num_values)
+int num_buckets;        // ceil((double)num_values / bucket_size)
 
 struct Partition {
     vector<int> buckets;
     vector<int> values;
     int N;      // bucket size
 
-    void init(int num_values) {
-        N = sqrt(num_values);
-        int num_buckets = ceil((double)num_values / N);
+    void init() {
+        N = bucket_size;
         buckets.clear();    buckets.resize(num_buckets);
         values.clear();     values.resize(num_values);
     }
@@ -40,7 +43,11 @@ Partition part;
 
 int main()
 {
-    part.init(16);
+    num_values = 16;
+    bucket_size = sqrt(num_values);
+    num_buckets = ceil((double)num_values / bucket_size);
+
+    part.init();
     vector<int> x = { 1, 4, 7, 5, 2, 8, 3, 1, 8, 5, 4, 7, 2, 7, 3, 0 };
 
     for (int i = 0; i < x.size(); i++) {

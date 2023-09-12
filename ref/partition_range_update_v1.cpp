@@ -1,17 +1,20 @@
 #if 0
-// [포인트 값]
+// [STL] Range Update
 #include <vector>
 #include <cmath>
 using namespace std;
+
+int num_values;
+int bucket_size;        // sqrt(num_values)
+int num_buckets;        // ceil((double)num_values / bucket_size)
 
 struct Partition {
     vector<int> buckets;
     vector<int> values;
     int N;      // bucket size
 
-    void init(int num_values) {
-        N = sqrt(num_values);
-        int num_buckets = ceil((double)num_values / N);
+    void init() {
+        N = bucket_size;
         buckets.clear();    buckets.resize(num_buckets);
         values.clear();     values.resize(num_values);
     }
@@ -23,7 +26,6 @@ struct Partition {
             for (int i = left; i <= right; i++) { values[i] += value; }
             return;
         }
-
         while (left / N == s) { values[left++] += value; }
         while (right / N == e) { values[right--] += value; }
         for (int i = s + 1; i <= e - 1; i++) { buckets[i] += value; }
@@ -36,8 +38,10 @@ Partition part;
 
 int main()
 {
-    int num_values = 19;
-    part.init(num_values);
+    num_values = 19;
+    bucket_size = sqrt(num_values);
+    num_buckets = ceil((double)num_values / bucket_size);
+    part.init();
 
     part.update(1, 6, 5);
     part.update(4, 13, 2);

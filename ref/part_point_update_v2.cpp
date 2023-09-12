@@ -1,12 +1,17 @@
 #if 1
-// [구간합 / 최대값 / 최소값] point update / range query
+// [STL] point update / range query
 #include <vector>
 #include <cmath>
 using namespace std;
 
 #define INF INT32_MAX
+
 int min(int a, int b) { return (a < b) ? a : b; }
 int max(int a, int b) { return (a > b) ? a : b; }
+
+int num_values;
+int bucket_size;        // sqrt(num_values)
+int num_buckets;        // ceil((double)num_values / bucket_size)
 
 struct Data {
     int top;
@@ -25,16 +30,15 @@ struct Partition {
     vector<int> values;
     int N;      // bucket size
 
-    void init(int num_values) {
-        N = sqrt(num_values);
-        int num_buckets = ceil((double)num_values / N);
+    void init() {
+        N = bucket_size;
         buckets.clear();    buckets.resize(num_buckets);
         values.clear();     values.resize(num_values);
     }
     void update_minmax(int bIdx) {
         int left = bIdx * N;
-        int right = min((bIdx + 1) * N - 1, values.size() - 1);
-        
+        int right = min((bIdx + 1) * N - 1, num_values - 1);
+
         buckets[bIdx].top = 0;
         buckets[bIdx].bot = INF;
         for (int i = left; i <= right; i++) {
@@ -59,7 +63,7 @@ struct Partition {
         }
         while (left / N == s) { ret.update(values[left++]); }
         while (right / N == e) { ret.update(values[right--]); }
-        for (int i = s + 1; i <= e - 1; i++) { 
+        for (int i = s + 1; i <= e - 1; i++) {
             ret.top = max(ret.top, buckets[i].top);
             ret.bot = min(ret.bot, buckets[i].bot);
             ret.sum += buckets[i].sum;
@@ -67,7 +71,7 @@ struct Partition {
         return ret;
     }
     Data query() {
-        return query(0, values.size() - 1);
+        return query(0, num_values - 1);
     }
 };
 Partition part;
@@ -87,8 +91,12 @@ void print_query(int left, int right) {
 
 int main()
 {
-    part.init(19);
-    vector<int> x = { 0, 5, 3, 6, 10, 10, 9, 4, 4, 4, 9, 10, 10, 5, 3, 3, 3, 3, 0};
+    num_values = 19;
+    bucket_size = sqrt(num_values);
+    num_buckets = ceil((double)num_values / bucket_size);
+
+    part.init();
+    vector<int> x = { 0, 5, 3, 6, 10, 10, 9, 4, 4, 4, 9, 10, 10, 5, 3, 3, 3, 3, 0 };
 
     for (int i = 0; i < x.size(); i++) {
         part.update(i, x[i]);
