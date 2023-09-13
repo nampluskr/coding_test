@@ -1,4 +1,5 @@
 ## 파티션 - 1D 배열: Update / Query
+- [ ] 230908_물품보관
 - [x] [230520_미생물가계도](https://github.com/nampluskr/sw_pro/tree/main/solved/230520_%EB%AF%B8%EC%83%9D%EB%AC%BC%EA%B0%80%EA%B3%84%EB%8F%84) : 
 - [x] [230429_블록쌓기게임](https://github.com/nampluskr/sw_pro/tree/main/solved/230429_%EB%B8%94%EB%A1%9D%EC%8C%93%EA%B8%B0%EA%B2%8C%EC%9E%84) : STL 1728 ms / Manual 871 ms
 - [x] [230224_출근길라디오](https://github.com/nampluskr/sw_pro/tree/main/solved/230224_%EC%B6%9C%EA%B7%BC%EA%B8%B8%EB%9D%BC%EB%94%94%EC%98%A4) : Manual 635 ms / STL 679 ms / Brute Force 1176 ms
@@ -56,7 +57,7 @@
 - [x] [230211_우산창고](https://github.com/nampluskr/coding_test/tree/main/solved/230211_%EC%9A%B0%EC%82%B0%EC%B0%BD%EA%B3%A0)
 
 ## 가중치 그래프 - 최소 비용 경로 구하기 (Dijkstra)
-
+- [ ] 230901_전기차대여소
 - [x] [230617_호텔검색](https://github.com/nampluskr/coding_test/tree/main/solved/230617_%ED%98%B8%ED%85%94%EA%B2%80%EC%83%89) : STL 553 ms / Manual 410 ms
 - [X] [221209_항공노선관리](https://github.com/nampluskr/coding_test/tree/main/solved/221209_%ED%95%AD%EA%B3%B5%EB%85%B8%EC%84%A0%EA%B4%80%EB%A6%AC) : STL 593 ms / Manual 813 ms
 - [X] [221001_물류허브](https://github.com/nampluskr/coding_test/tree/main/solved/221001_%EB%AC%BC%EB%A5%98%ED%97%88%EB%B8%8C) : 
