@@ -4,11 +4,11 @@
 ## Get latest from https://github.com/github/gitignore/blob/main/VisualStudio.gitignore
 
 .gitignore
-main.cpp
 *.sln
 *.vcxproj
 *.filters
 sample_input.txt
+main.cpp
 
 # User-specific files
 *.rsuser
