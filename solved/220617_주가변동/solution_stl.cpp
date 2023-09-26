@@ -13,11 +13,19 @@ using namespace std;
 struct Stock {
 	char mStocks[MAX_STOCK_LEN + 1];
 	int mPrice;
+	int mPriceDiff;
 };
 vector<Stock> stocks;
 int stockCnt;
 
 
+//////////////////////////////////////////////////////////////////////////////
+int get_stockIndex(const char mStock[]) {
+	return -1;
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
 void init(int N, char mStocks[][MAX_STOCK_LEN + 1], int mPrices[])
 {
 	stocks.clear();	stocks.resize(N);
