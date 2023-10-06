@@ -23,7 +23,7 @@ struct LinkedList {
     ListNode* head;
     ListNode* tail;
 
-    void clera() { head = nullptr; tail = nullptr; }
+    void clear() { head = nullptr; tail = nullptr; }
     void push_back(const Type& data) {
         ListNode* node = new ListNode({ data, nullptr });
         if (head == nullptr) { head = node; tail = node; }
@@ -40,7 +40,7 @@ struct HashMap {
     };
     LinkedList<MapData> table[MAX_TABLE];
 
-    void clear() { for (int i = 0; i < MAX_TABLE; i++) table[i].clera(); }
+    void clear() { for (int i = 0; i < MAX_TABLE; i++) table[i].clear(); }
     int find(const Type1& key) {
         int hashkey = key % MAX_TABLE;
         for (auto node = table[hashkey].head; node; node = node->next) {
