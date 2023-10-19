@@ -1,3 +1,187 @@
+### [STL PQ] - 풀이중 (1 ~ 5: 0, 5 ~ 25: 100)
+
+```cpp
+#if 1
+// [STL PQ] 1125 ms WS (1 ~ 5: 0, 5 ~ 25: 100)
+#include <vector>
+#include <queue>
+#include <cassert>
+using namespace std;
+
+#define MAX_PLAYERS (39990 + 1)     // players
+#define MAX_LEAGUES (3999 + 1)      // leagues
+#define POPPED  1
+
+int playerCnt;
+int leagueCnt;
+
+struct Player {
+    int ID;
+    int mAbility;
+    bool popped;        // --> league index 로 변경유무 확인할 것!!!
+
+    bool operator<(const Player& p) const {
+        return (mAbility < p.mAbility) || (mAbility == p.mAbility && ID > p.ID);
+    }
+};
+vector<Player> players;
+
+struct League {
+    struct cmpMax {
+        bool operator()(const Player& a, const Player& b) const {
+            return (a.mAbility < b.mAbility) || (a.mAbility == b.mAbility && a.ID > b.ID);
+        }
+    };
+    struct cmpMin {
+        bool operator()(const Player& a, const Player& b) const {
+            return (a.mAbility > b.mAbility) || (a.mAbility == b.mAbility && a.ID < b.ID);
+        }
+    };
+
+    priority_queue<Player, vector<Player>, cmpMax> maxHeap;     // max
+    priority_queue<Player, vector<Player>, cmpMin> minHeap;     // min
+
+    priority_queue<Player, vector<Player>, cmpMax> leftHeap;    // x < middle
+    priority_queue<Player, vector<Player>, cmpMin> rightHeap;   // x > middle
+    Player middle;
+    int leftSize, rightSize;
+
+    void insert(const Player& player) {
+        // 최대값, 최소값
+        players[player.ID].popped = false;
+        maxHeap.push(player);
+        minHeap.push(player);
+        
+        // 중앙값
+        if (maxHeap.size() == 1 && minHeap.size() == 1) { middle = player; return; }
+
+        if (player < middle) { leftHeap.push(player); leftSize += 1; }
+        else { rightHeap.push(player); rightSize += 1; }
+        update();
+    }
+    void update() {
+        // leftSize, rightSize 차이가 2일때만 ???
+        if (leftSize < rightSize) {
+            leftHeap.push(middle);
+            middle = rightHeap.top(); rightHeap.pop();
+            leftSize += 1;
+            rightSize -= 1;
+        }
+        else if (leftSize > rightSize) {
+            rightHeap.push(middle);
+            middle = leftHeap.top(); leftHeap.pop();
+            rightSize += 1;
+            leftSize -= 1;
+        }
+    }
+    int get_minID() {
+        while (!minHeap.empty() && players[minHeap.top().ID].popped) { minHeap.pop(); }
+        auto player = minHeap.top(); minHeap.pop();
+        players[player.ID].popped = true;
+        leftSize -= 1;
+        return player.ID;
+    }
+    int get_maxID() {
+        while (!maxHeap.empty() && players[maxHeap.top().ID].popped) { maxHeap.pop(); }
+        auto player = maxHeap.top(); maxHeap.pop();
+        players[player.ID].popped = true;
+        rightSize -= 1;
+        return player.ID;
+    }
+    int get_midID() {
+        //while (!leftHeap.empty() && players[leftHeap.top().ID].popped) { leftHeap.pop(); }
+        //while (!rightHeap.empty() && players[rightHeap.top().ID].popped) { rightHeap.pop(); }
+
+        //while (players[middle.ID].popped) {
+        //    if (leftSize < rightSize) {
+        //        middle = rightHeap.top(); rightHeap.pop();
+        //        rightSize -= 1;
+        //    }
+        //    else if (leftSize > rightSize) {
+        //        middle = leftHeap.top(); leftHeap.pop();
+        //        leftSize -= 1;
+        //    }
+        //}
+
+        int ID = middle.ID;
+        if (leftSize < rightSize) {
+            middle = rightHeap.top(); rightHeap.pop();
+            rightSize -= 1;
+        }
+        else if (leftSize > rightSize) {
+            middle = leftHeap.top(); leftHeap.pop();
+            leftSize -= 1;
+        }
+        return ID;
+    }
+};
+vector<League> leagues;
+
+//int minIDList[MAX_LEAGUES];
+//int midIDList[MAX_LEAGUES];
+//int maxIDList[MAX_LEAGUES];
+
+/////////////////////////////////////////////////////////////////////
+void init(int N, int L, int mAbility[])
+{
+    playerCnt = N;
+    leagueCnt = L;
+
+    players.clear();    players.resize(N);
+    leagues.clear();    leagues.resize(L);
+
+    for (int i = 0; i < playerCnt; i++) {
+        players[i] = { i, mAbility[i], false };
+        leagues[i / (N / L)].insert({ i, mAbility[i], false });
+    }
+}
+
+// 500
+int move()
+{
+    int ret = 0;
+    vector<int> minIDList;
+    vector<int> maxIDList;
+
+    // 최대값, 최소값 저장
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        int minID = leagues[i].get_minID();
+        int maxID = leagues[i + 1].get_maxID();
+        minIDList.push_back(minID);
+        maxIDList.push_back(maxID);
+        ret += minID + maxID;
+    }
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        leagues[i].insert(players[maxIDList[i]]);
+        leagues[i + 1].insert(players[minIDList[i]]);
+    }
+    return ret;
+}
+
+// 1000
+int trade()
+{
+    int ret = 0;
+    vector<int> midIDList;
+    vector<int> maxIDList;
+
+    // 중앙값, 최대값 저장
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        int midID = leagues[i].get_midID();
+        int maxID = leagues[i + 1].get_maxID();
+        midIDList.push_back(midID);
+        maxIDList.push_back(maxID);
+        ret += midID + maxID;
+    }
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        leagues[i].insert(players[maxIDList[i]]);
+        leagues[i + 1].insert(players[midIDList[i]]);
+    }
+    return ret;
+}
+#endif
+```
+
 ### [STL set-1] 
 
 ```cpp
@@ -219,6 +403,122 @@ int trade()
         leagues[i].insert(players[maxIDList[i]]);
         leagues[i + 1].insert(players[midIDList[i]]);
     }
+    return ret;
+}
+#endif
+```
+
+### [STL vector] 정렬 / 추가 / 삭제
+
+```cpp
+#if 0
+// [STL vector] 26245 ms WS
+#include <vector>
+#include <queue>
+using namespace std;
+
+#define MAX_PLAYERS (39990 + 1)     // players
+#define MAX_LEAGUES (3999 + 1)      // leagues
+
+int playerCnt;
+int leagueCnt;
+
+struct Player {
+    int ID;
+    int mAbility;
+
+    bool operator<(const Player& p) const {
+        return (mAbility < p.mAbility) || (mAbility == p.mAbility && ID > p.ID);
+    }
+};
+vector<Player> players;
+
+struct League {
+    vector<Player> playerList;
+
+    void update() {
+        sort(playerList.begin(), playerList.end());
+    }
+    int get_midID() {
+        int ID = playerList[playerCnt / leagueCnt / 2].ID;
+        auto iter = playerList.begin();
+        advance(iter, playerCnt / leagueCnt / 2);
+        playerList.erase(iter);
+        return ID;
+    }
+    int get_minID() { 
+        int ID = playerList.front().ID;
+        playerList.erase(playerList.begin());
+        return ID;
+    }
+    int get_maxID() {
+        int ID = playerList.back().ID;
+        playerList.erase(--playerList.end());
+        return ID;
+    }
+    void insert(const Player& player) { playerList.push_back(player); }
+};
+vector<League> leagues;
+
+int minIDList[MAX_LEAGUES];
+int midIDList[MAX_LEAGUES];
+int maxIDList[MAX_LEAGUES];
+
+/////////////////////////////////////////////////////////////////////
+void init(int N, int L, int mAbility[])
+{
+    playerCnt = N;
+    leagueCnt = L;
+
+    players.clear();    players.resize(N);
+    leagues.clear();    leagues.resize(L);
+
+    for (int i = 0; i < playerCnt; i++) {
+        players[i] = { i, mAbility[i] };
+        leagues[i / (N / L)].insert({i, mAbility[i]});
+    }
+    for (int i = 0; i < leagueCnt; i++) { leagues[i].update(); }
+}
+
+// 500
+int move()
+{
+    int ret = 0;
+
+    // 최대값, 최소값 저장
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        int minID = leagues[i].get_minID();
+        int maxID = leagues[i + 1].get_maxID();
+        minIDList[i] = minID;
+        maxIDList[i] = maxID;
+        ret += minID + maxID;
+    }
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        leagues[i].insert(players[maxIDList[i]]);
+        leagues[i + 1].insert(players[minIDList[i]]);
+    }
+    for (int i = 0; i < leagueCnt; i++) { leagues[i].update(); }
+    return ret;
+}
+
+// 1000
+int trade()
+{
+    int ret = 0;
+
+    // 중앙값, 최대값 저장
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        int midID = leagues[i].get_midID();
+        int maxID = leagues[i + 1].get_maxID();
+        midIDList[i] = midID;
+        maxIDList[i] = maxID;
+        ret += midID + maxID;
+    }
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        leagues[i].insert(players[maxIDList[i]]);
+        leagues[i + 1].insert(players[midIDList[i]]);
+    }
+    for (int i = 0; i < leagueCnt; i++) { leagues[i].update(); }
     return ret;
 }
 #endif
