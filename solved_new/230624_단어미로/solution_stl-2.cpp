@@ -1,95 +1,111 @@
-﻿#if 1
+﻿#if 0
 // STL 607 ms
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
 #include <vector>
-#include <string>
 #include <cstring>
 #include <unordered_map>
 #include <queue>
-using namespace std;
 
-#define MAX_LEN    12
-#define MAX_ROOMS   30001   // mID 처음 호출시 1
+using namespace std;
+using ull = unsigned long long;
+
+#define MAX_LEN     (11 + 1)
+#define MAX_ROOMS   (30000 + 1)   // mID 처음 호출시 1
 
 struct Room {
-    char mWord[MAX_LEN];
-    char dir[3][MAX_LEN];
+    ull word_encoded;
+    int dir_encoded[3];
 };
-vector<Room> rooms;
-unordered_map<string, int> roomMap;
+Room rooms[MAX_ROOMS];
+unordered_map<ull, int> roomMap;
 int roomCnt;
 
 int currentRoom;
 
-struct RoomData {
+struct Data {
     int mID;
-    char mWord[MAX_LEN];
+    ull word_encoded;
 
-    //RoomData() { this->mID = 0;  strcpy_s(this->mWord, ""); }
-    RoomData(int mID, const char mWord[]) {
-        this->mID = mID;  strcpy_s(this->mWord, mWord);
-    }
-    bool operator<(const RoomData& data) const {
-        return strcmp(mWord, data.mWord) > 0;
+    bool operator<(const Data& data) const {
+        return word_encoded > data.word_encoded;
     }
 };
-unordered_map<string, int> roomPQMap[3];
-priority_queue<RoomData> roomPQ[3][MAX_ROOMS];
-//unordered_map<string, priority_queue<RoomData>> roomPQMap[3];
+priority_queue<Data> roomPQMap[3][27*27*27*27];
+
+/////////////////////////////////////////////////////////////////////
+ull encode11(const char str[]) {
+    ull hash = 0;
+    int i = 0;
+    for (; str[i]; i++) { hash = hash * 27 + str[i] - 'a' + 1; }
+    for (; i < 11; i++) { hash *= 27; }
+    return hash;
+}
+
+ull encode4(const char str[]) {
+    ull hash = 0;
+    int i = 0;
+    for (; str[i]; i++) { hash = hash * 27 + str[i] - 'a' + 1; }
+    for (; i < 4; i++) { hash *= 27; }
+    return hash;
+}
 
 /////////////////////////////////////////////////////////////////////
 void init()
 {
-    rooms.clear();  rooms.resize(MAX_ROOMS);
+    for (int i = 0; i < MAX_ROOMS; i++) { rooms[i] = {}; }
     roomMap.clear();
     roomCnt = 0;
 
     for (int i = 0; i < 3; i++)
-        roomPQMap[i].clear();
+        for (int j = 0; j < 27 * 27 * 27 * 27; j++) {
+            while (!roomPQMap[i][j].empty()) { roomPQMap[i][j].pop(); }
+        }
 }
 
 void addRoom(int mID, char mWord[], int mDirLen[])
 {
-    strcpy_s(rooms[mID].mWord, mWord);
-    strncpy_s(rooms[mID].dir[0], mWord, mDirLen[0]);
-    strncpy_s(rooms[mID].dir[1], mWord + 4, mDirLen[1]);
-    strncpy_s(rooms[mID].dir[2], mWord + 11 - mDirLen[2], mDirLen[2]);
+    ull word_encoded = encode11(mWord);
+    char strDir[3][5];
 
-    string word = string(mWord);
-    roomMap.emplace(word, mID);
-    roomPQMap[0].emplace(word.substr(7, 4), 0);
-    roomPQMap[0].emplace(word.substr(7, 4), 0);
-    roomPQMap[1].emplace(word.substr(7, 4), 1);
-    roomPQMap[2].emplace(word.substr(7, 4), 2);
-    roomPQMap[2].emplace(word.substr(7, 4), 2);
+    strncpy_s(strDir[0], mWord + 0, mDirLen[0]);
+    strncpy_s(strDir[1], mWord + 4, mDirLen[1]);
+    strncpy_s(strDir[2], mWord + 11 - mDirLen[2], mDirLen[2]);
 
-    roomPQMap[0][word.substr(7, 4)].push({ mID, mWord });
-    roomPQMap[0][word.substr(9, 2)].push({ mID, mWord });
-    roomPQMap[1][word.substr(4, 3)].push({ mID, mWord });
-    roomPQMap[2][word.substr(0, 4)].push({ mID, mWord });
-    roomPQMap[2][word.substr(0, 2)].push({ mID, mWord });
+    rooms[mID].word_encoded = encode11(mWord);
+    rooms[mID].dir_encoded[0] = encode4(strDir[0]);
+    rooms[mID].dir_encoded[1] = encode4(strDir[1]);
+    rooms[mID].dir_encoded[2] = encode4(strDir[2]);
+
+    roomMap.emplace(word_encoded, mID);
+
+    char str[5];
+    strncpy_s(str, mWord + 7, 4);   roomPQMap[0][encode4(str)].push({ mID, word_encoded });
+    strncpy_s(str, mWord + 9, 2);   roomPQMap[0][encode4(str)].push({ mID, word_encoded });
+    strncpy_s(str, mWord + 4, 3);   roomPQMap[1][encode4(str)].push({ mID, word_encoded });
+    strncpy_s(str, mWord + 0, 4);   roomPQMap[2][encode4(str)].push({ mID, word_encoded });
+    strncpy_s(str, mWord + 0, 2);   roomPQMap[2][encode4(str)].push({ mID, word_encoded });
 }
 
 void setCurrent(char mWord[])
 {
-    int mID = roomMap[string(mWord)];
+    int mID = roomMap[encode11(mWord)];
     currentRoom = mID;
 }
 
 int moveDir(int mDir)
 {
     int ret = 0;
-    string subWord = string(rooms[currentRoom].dir[mDir]);
-    auto& Q = roomPQMap[mDir][subWord];
+    int str_encoded = rooms[currentRoom].dir_encoded[mDir];
+    auto& Q = roomPQMap[mDir][str_encoded];
 
     vector<int> popped;
     while (!Q.empty()) {
         auto data = Q.top(); Q.pop();
 
-        if (strcmp(rooms[data.mID].mWord, data.mWord) != 0) continue;
+        if (rooms[data.mID].word_encoded != data.word_encoded) continue;
 
         popped.push_back(data.mID);
         if (data.mID != currentRoom) {
@@ -97,14 +113,14 @@ int moveDir(int mDir)
             break;
         }
     }
-    for (int mID : popped) { Q.push({ mID, rooms[mID].mWord }); }
+    for (int mID : popped) { Q.push({ mID, rooms[mID].word_encoded }); }
     if (ret != 0) { currentRoom = ret; }
     return ret;
 }
 
 void changeWord(char mWord[], char mChgWord[], int mChgLen[])
 {
-    int mID = roomMap[string(mWord)];
+    int mID = roomMap[encode11(mWord)];
     addRoom(mID, mChgWord, mChgLen);
 }
 #endif

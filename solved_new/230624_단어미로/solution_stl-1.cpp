@@ -1,5 +1,5 @@
-﻿#if 0
-// STL 607 ms
+﻿#if 1
+// STL 607 ms (ref.)
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -11,37 +11,37 @@
 #include <queue>
 using namespace std;
 
-#define MAX_LEN    12
-#define MAX_ROOMS   30001   // mID 처음 호출시 1
+#define MAX_LEN     (11 + 1)
+#define MAX_ROOMS   (30000 + 1)   // mID 처음 호출시 1
 
 struct Room {
     char mWord[MAX_LEN];
     char dir[3][MAX_LEN];
 };
-vector<Room> rooms;
+Room rooms[MAX_ROOMS];
 unordered_map<string, int> roomMap;
 int roomCnt;
 
 int currentRoom;
 
-struct RoomData {
+struct Data {
     int mID;
     char mWord[MAX_LEN];
 
-    //RoomData() { this->mID = 0;  strcpy_s(this->mWord, ""); }
-    RoomData(int mID, const char mWord[]) {
+    //Data() { this->mID = 0;  strcpy_s(this->mWord, ""); }
+    Data(int mID, const char mWord[]) {
         this->mID = mID;  strcpy_s(this->mWord, mWord);
     }
-    bool operator<(const RoomData& data) const { 
+    bool operator<(const Data& data) const { 
         return strcmp(mWord, data.mWord) > 0;
     }
 };
-unordered_map<string, priority_queue<RoomData>> roomPQMap[3];
+unordered_map<string, priority_queue<Data>> roomPQMap[3];
 
 /////////////////////////////////////////////////////////////////////
 void init()
 {
-    rooms.clear();  rooms.resize(MAX_ROOMS);
+    for (int i = 0; i < MAX_ROOMS; i++) { rooms[i] = {}; }
     roomMap.clear();
     roomCnt = 0;
 
