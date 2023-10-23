@@ -1,3 +1,165 @@
+### [STL PQ] - 풀이중 player.league 정보 비교
+
+```cpp
+#if 1
+#include <vector>
+#include <queue>
+using namespace std;
+
+#define MAX_PLAYERS     (39990 + 1)
+#define MAX_LEAGUES     (3999 + 1)
+
+struct Player {
+    int ID;
+    int ability;
+    int league;
+
+    bool operator<(const Player& p) const {
+        return (ability < p.ability) || (ability == p.ability && ID > p.ID);
+    }
+};
+vector<Player> players;
+int playerCnt;
+
+struct League {
+    struct cmpMax {
+        bool operator()(const Player& a, const Player& b) const {
+            return (a.ability < b.ability) || (a.ability == b.ability && a.ID > b.ID);
+        }
+    };
+    struct cmpMin {
+        bool operator()(const Player& a, const Player& b) const {
+            return (a.ability > b.ability) || (a.ability == b.ability && a.ID < b.ID);
+        }
+    };
+
+    priority_queue<Player, vector<Player>, cmpMax> maxHeap;     // max
+    priority_queue<Player, vector<Player>, cmpMin> minHeap;     // min
+
+    priority_queue<Player, vector<Player>, cmpMax> leftHeap;    // x < middle
+    priority_queue<Player, vector<Player>, cmpMin> rightHeap;   // x > middle
+    
+    int league;
+    Player middle;
+    int leftSize, rightSize;
+
+    void insert(const Player& player) {
+        players[player.ID].league = league;
+        maxHeap.push(player);
+        minHeap.push(player);
+
+        // 중앙값
+        if (maxHeap.size() == 1 && minHeap.size() == 1) { middle = player; return; }
+
+        if (player < middle) { leftHeap.push(player); leftSize += 1; }
+        else { rightHeap.push(player); rightSize += 1; }
+
+        if (leftSize < rightSize) {
+            leftHeap.push(middle);
+            middle = rightHeap.top(); rightHeap.pop();
+            leftSize += 1;
+            rightSize -= 1;
+        }
+        else if (leftSize > rightSize) {
+            rightHeap.push(middle);
+            middle = leftHeap.top(); leftHeap.pop();
+            rightSize += 1;
+            leftSize -= 1;
+        }
+    }
+    int get_minID() {
+        while (!minHeap.empty() && minHeap.top().league != league) { minHeap.pop(); }
+        auto player = minHeap.top(); minHeap.pop();
+        leftSize -= 1;
+        return player.ID;
+    }
+    int get_maxID() {
+        while (!maxHeap.empty() && maxHeap.top().league != league) { maxHeap.pop(); }
+        auto player = maxHeap.top(); maxHeap.pop();
+        rightSize -= 1;
+        return player.ID;
+    }
+    int get_midID() {
+        while (!leftHeap.empty() && leftHeap.top().league != league) { leftHeap.pop(); }
+        while (!rightHeap.empty() && rightHeap.top().league != league) { rightHeap.pop(); }
+
+        int ID = middle.ID;
+        if (leftSize < rightSize) {
+            middle = rightHeap.top(); rightHeap.pop();
+            rightSize -= 1;
+        }
+        else if (leftSize > rightSize) {
+            middle = leftHeap.top(); leftHeap.pop();
+            leftSize -= 1;
+        }
+        return ID;
+    }
+};
+vector<League> leagues;
+int leagueCnt;
+int numPlayers;
+
+/////////////////////////////////////////////////////////////////////
+void init(int N, int L, int ability[])
+{
+    players.clear();    players.resize(N);
+    playerCnt = N;
+
+    leagues.clear();    leagues.resize(L);
+    leagueCnt = L;
+    numPlayers = N / L;
+
+    for (int i = 0; i < playerCnt; i++) {
+        players[i] = { i, ability[i], i / numPlayers };
+        leagues[i / numPlayers].league = i / numPlayers;
+        leagues[i / numPlayers].insert(players[i]);
+    }
+}
+
+int move()
+{
+    int ret = 0;
+    vector<int> minIDList;
+    vector<int> maxIDList;
+
+    // 최대값, 최소값 저장
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        int minID = leagues[i].get_minID();
+        int maxID = leagues[i + 1].get_maxID();
+        minIDList.push_back(minID);
+        maxIDList.push_back(maxID);
+        ret += minID + maxID;
+    }
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        leagues[i].insert(players[maxIDList[i]]);
+        leagues[i + 1].insert(players[minIDList[i]]);
+    }
+    return ret;
+}
+
+int trade()
+{
+    int ret = 0;
+    vector<int> midIDList;
+    vector<int> maxIDList;
+
+    // 중앙값, 최대값 저장
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        int midID = leagues[i].get_midID();
+        int maxID = leagues[i + 1].get_maxID();
+        midIDList.push_back(midID);
+        maxIDList.push_back(maxID);
+        ret += midID + maxID;
+    }
+    for (int i = 0; i < leagueCnt - 1; i++) {
+        leagues[i].insert(players[maxIDList[i]]);
+        leagues[i + 1].insert(players[midIDList[i]]);
+    }
+    return ret;
+}
+#endif
+```
+
 ### [STL PQ] - 풀이중 (1 ~ 5: 0, 5 ~ 25: 100)
 
 ```cpp
