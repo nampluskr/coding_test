@@ -1,14 +1,13 @@
 #if 1
-// STL 2625 ms (TC = 50), Manual 2377 ms
+// STL 2625 ms (TC = 50), Manual 2353 ms
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 
-#include <vector>
-#include <unordered_map>
-#include <string>
 #include <cstring>
 using namespace std;
+
+inline int max(int a, int b) { return (a < b) ? b : a; }
 
 #define MAX_COMPOUNDS   (5000 + 1)
 
@@ -29,7 +28,7 @@ struct LinkedList {
     }
 };
 
-#define MAX_TABLE   50007
+#define MAX_TABLE   5007
 struct HashMapList {
     LinkedList<int> table[MAX_TABLE];
 
@@ -66,7 +65,7 @@ extern int calc_correlation(const char str1[11], const char str2[11]);
 struct Compound {
     INFO info;
 };
-vector<Compound> compounds;
+Compound compounds[MAX_COMPOUNDS];
 int compoundCnt;
 
 HashMapList firstMap;
@@ -93,7 +92,7 @@ int get_score(const INFO& info1, const INFO& info2) {
 ////////////////////////////////////////////////////////////////////////////////
 void init()
 {
-    compounds.clear();  compounds.resize(MAX_COMPOUNDS);
+    for (int i = 0; i < MAX_COMPOUNDS; i++) { compounds[i] = {}; }
     compoundCnt = 0;
 
     firstMap.clear();
