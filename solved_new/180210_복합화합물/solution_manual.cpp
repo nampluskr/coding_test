@@ -41,10 +41,10 @@ struct HashMapList {
         }
         return hash % MAX_TABLE;
     }
-    void emplace(const char key[], int value) {
-        int hash = hashfunc(key);
-        table[hash].push_back(value);
-    }
+    //void emplace(const char key[], int value) {
+    //    int hash = hashfunc(key);
+    //    table[hash].push_back(value);
+    //}
     LinkedList<int>& operator[](const char key[]) {
         int hash = hashfunc(key);
         return table[hash];
@@ -111,11 +111,11 @@ void addDB(INFO info)
     strcpy(compounds[cIdx].info.fourth, info.fourth);
     strcpy(compounds[cIdx].info.fifth, info.fifth);
 
-    firstMap.emplace(info.first, cIdx);
-    secondMap.emplace(info.second, cIdx);
-    thirdMap.emplace(info.third, cIdx);
-    fourthMap.emplace(info.fourth, cIdx);
-    fifthMap.emplace(info.fifth, cIdx);
+    firstMap[info.first].push_back(cIdx);
+    secondMap[info.second].push_back(cIdx);
+    thirdMap[info.third].push_back(cIdx);
+    fourthMap[info.fourth].push_back(cIdx);
+    fifthMap[info.fifth].push_back(cIdx);
 }
 
 int newCompound(INFO info)

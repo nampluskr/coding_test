@@ -1,4 +1,4 @@
-﻿#if 1
+﻿#if 0
 // STL 607 ms (ref.)
 #ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS
