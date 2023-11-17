@@ -1,14 +1,14 @@
-#if 0
+ï»¿#if 0
 // Manual 943 ms
-#define MAX_SAMPLES 20000	// addSample() ÇÔ¼öÀÇ È£Ãâ È½¼ö 20,000 ÀÌÇÏ
-#define MAX_TYPES	11		// ÀÚ·áÀÇ ¹üÁÖ (1 ¡Â mC ¡Â 10)
-#define MAX_SIZE	4001	// ÀÚ·áÀÇ xÃà, yÃà À§Ä¡ (1 ¡Â mX, mY ¡Â 4,000)
+#define MAX_SAMPLES 20000	// addSample() í•¨ìˆ˜ì˜ í˜¸ì¶œ íšŸìˆ˜ 20,000 ì´í•˜
+#define MAX_TYPES	11		// ìë£Œì˜ ë²”ì£¼ (1 â‰¤ mC â‰¤ 10)
+#define MAX_SIZE	4001	// ìë£Œì˜ xì¶•, yì¶• ìœ„ì¹˜ (1 â‰¤ mX, mY â‰¤ 4,000)
 
 #define ADDED	0
 #define REMOVED	1
 
-#define N	100				// °³º° ÆÄÆ¼¼Ç Å©±â
-#define MAX_BUCKETS	200		// ÆÄÆ¼¼Ç ÀüÃ¼ °³¼ö
+#define N	100				// ê°œë³„ íŒŒí‹°ì…˜ í¬ê¸°
+#define MAX_BUCKETS	200		// íŒŒí‹°ì…˜ ì „ì²´ ê°œìˆ˜
 
 
 inline int abs(int x) { return (x > 0) ? x : -x; }
@@ -73,8 +73,8 @@ int sampleCnt;
 IntHashMapInt sampleMap;
 LinkedList<int> sampleList[MAX_BUCKETS][MAX_BUCKETS];
 
-int K;		// ±ÙÁ¢ ÀÌ¿ô °³¼ö
-int L;		// ¾Æ¿ô¶óÀÌ¾î ¹üÀ§
+int K;		// ê·¼ì ‘ ì´ì›ƒ ê°œìˆ˜
+int L;		// ì•„ì›ƒë¼ì´ì–´ ë²”ìœ„
 
 template<typename Type>
 struct PriorityQueue {
@@ -148,8 +148,8 @@ void init(int _K, int _L)
 void addSample(int mID, int mX, int mY, int mC)
 {
 	int sIdx = get_sampleIndex(mID);
-	samples[sIdx] = { mX, mY, mC, ADDED };					// ÀüÃ¼ Å½»ö
-	sampleList[(mX - 1) / N][(mY - 1) / N].push_back(sIdx);	// ºÎºĞ Å½»ö
+	samples[sIdx] = { mX, mY, mC, ADDED };					// ì „ì²´ íƒìƒ‰
+	sampleList[(mX - 1) / N][(mY - 1) / N].push_back(sIdx);	// ë¶€ë¶„ íƒìƒ‰
 }
 
 void deleteSample(int mID)
@@ -162,13 +162,13 @@ int predict(int mX, int mY)
 {
 	PriorityQueue<Data> Q;	Q.clear();
 
-	// ÀüÃ¼ Å½»ö + ÈüÁ¤·Ä
+	// ì „ì²´ íƒìƒ‰ + í™ì •ë ¬
 	//for (int sIdx = 0; sIdx < sampleCnt; sIdx++) {
 	//	if (samples[sIdx].state == REMOVED) continue;
 	//	Q.push({ samples[sIdx].dist(mX, mY), samples[sIdx].mX, samples[xIdx].mY, sIdx });
 	//}
 
-	// ºÎºĞ Å½»ö + ÈüÁ¤·Ä
+	// ë¶€ë¶„ íƒìƒ‰ + í™ì •ë ¬
 	int spX = max((mX - 1 - L) / N, 0);
 	int spY = max((mY - 1 - L) / N, 0);
 	int epX = min((mX - 1 + L) / N, MAX_BUCKETS - 1);
@@ -182,7 +182,7 @@ int predict(int mX, int mY)
 				Q.push({ samples[sIdx].dist(mX, mY), samples[sIdx].mX, samples[sIdx].mY, sIdx });
 			}
 
-	// KNN ¼±ÅÃ
+	// KNN ì„ íƒ
 	int cnt = 0;
 	int topk[MAX_TYPES] = {};
 	while (!Q.empty() && cnt < K) {
@@ -192,7 +192,7 @@ int predict(int mX, int mY)
 		cnt += 1;
 	}
 
-	// ¹üÁÖ ÆÇÁ¤
+	// ë²”ì£¼ íŒì •
 	int ret = 1;
 	for (int mC = 2; mC < MAX_TYPES; mC++) {
 		if (topk[mC] > topk[ret]) { ret = mC; }
