@@ -8,7 +8,6 @@
 *.vcxproj
 *.filters
 sample_input.txt
-main.cpp
 
 # User-specific files
 *.rsuser
