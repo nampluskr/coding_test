@@ -8,7 +8,7 @@ struct LinkedList {
     };
     ListNode* head;     // = nullptr;
     ListNode* tail;     // = nullptr;
-    int listSize;
+    int listSize;       // = 0;
 
     void clear() { head = nullptr; tail = nullptr; listSize = 0; }
     void push_back(const Type& data) {

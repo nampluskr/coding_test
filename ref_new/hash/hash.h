@@ -19,7 +19,7 @@ struct LinkedList {
     };
     ListNode* head;     // = nullptr;
     ListNode* tail;     // = nullptr;
-    int listSize;
+    int listSize;       // = 0;
 
     void clear() { head = nullptr; tail = nullptr; listSize = 0; }
     void push_back(const Type& data) {
@@ -33,19 +33,19 @@ struct LinkedList {
 
 struct IntMapInt {
     struct Pair {
-        int key, value;
+        unsigned long long key; int value;
     };
     LinkedList<Pair> table[MAX_TABLE];
 
     void clear() { for (int i = 0; i < MAX_TABLE; i++) table[i].clear(); }
-    int find(int key) {
+    int find(unsigned long long key) {
         int hash = intHash(key);
         for (auto ptr = table[hash].head; ptr; ptr = ptr->next) {
             if (ptr->data.key == key) { return ptr->data.value; }
         }
         return -1;
     }
-    void emplace(int key, int value) {
+    void emplace(unsigned long long key, int value) {
         int hash = intHash(key);
         table[hash].push_back({ key, value });
     }
@@ -88,7 +88,7 @@ struct IntMap {
         objectCnt = 0;
         objectMap.clear();
     }
-    int getIndex(int key) {
+    int getIndex(unsigned long long key) {
         int idx;
         auto ret = objectMap.find(key);
         if (ret == -1) {
@@ -98,7 +98,7 @@ struct IntMap {
         else { idx = ret; }
         return idx;
     }
-    Type& operator[](int key) {
+    Type& operator[](unsigned long long key) {
         int idx = getIndex(key);
         return objects[idx];
     }

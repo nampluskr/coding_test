@@ -1,11 +1,11 @@
 #include "hash.h"
 
-int intHash(int key) {
+int intHash(unsigned long long key) {
     return key % MAX_TABLE;
 }
 
-#define KNUTH_MAX_TABLE     (2 << 10)
-int knuthHash(int key) {
+#define KNUTH_MAX_TABLE     (1024 * 4)  // 2^n
+int knuthHash(unsigned long long key) {
     unsigned long long hash = key * 2654435769;  // 2^32 * (sqrt(5) - 1) / 2
     return hash & (KNUTH_MAX_TABLE - 1);
 }

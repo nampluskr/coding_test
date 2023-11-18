@@ -19,7 +19,7 @@ struct PQ{
 #define MAX_HEAP    1000
 template<typename Type>
 struct PriorityQueue {
-    Type heap[MAX_HEAP];
+    Type heap[MAX_HEAP];    // #define MAX_HEA 1000
     int heapSize;
 
     void clear() { heapSize = 0; }
