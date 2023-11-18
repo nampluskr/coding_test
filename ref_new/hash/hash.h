@@ -56,7 +56,7 @@ struct StrMapInt {
     struct Pair {
         char key[11]; int value;
         Pair() { strcpy_s(this->key, ""); this->value = 0; }
-        Pair(const char key[], int value) { 
+        Pair(const char key[], int value) {
             strcpy_s(this->key, key); this->value = value;
         }
     };

@@ -2,7 +2,7 @@
 #include <cmath>
 #include "part.h"
 
-#define RANGE_MINMAX
+#define MINMAX
 
 PartitionPoint part;
 
@@ -21,13 +21,14 @@ int main()
     part.init();
     for ( int i = 0; i < num_values; i++ ) { part.update(i, values[i]); }
 
-#ifndef RANGE_MINMAX
+#ifndef MINMAX
     // range sum
-    printf(">> Range Sum = %d\n", part.query(3, 14));
+    auto ret = part.query(3, 14);
+    printf(">> Range Sum = %d\n", ret);
 
 #else
     // range min, max
-    auto ret = part.query(3, 14);
+    auto ret = part.query(4, 8);
     printf(">> Range Max = %d: values[%d]\n", ret.top.value, ret.top.idx);
     printf(">> Range Min = %d: values[%d]\n", ret.bot.value, ret.bot.idx);
 
