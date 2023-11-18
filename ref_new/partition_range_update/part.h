@@ -61,8 +61,8 @@ struct PartitionRange {
             return ret;
         }
         while (left / N == s) { ret += query(left++); }
-        while (right / N == e) { ret += query(right--); }
         for (int i = s + 1; i <= e - 1; i++) { ret += buckets[i].sum; }
+        while (right / N == e) { ret += query(right--); }
         return ret;
     }
 };
