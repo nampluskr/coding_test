@@ -1,4 +1,4 @@
-﻿#if 1
+﻿#if 0
 // LZW 압축 알고리즘
 // https://timewizhan.tistory.com/entry/LZW-Compression
 // https://velog.io/@yskyal17/LZW-%EC%95%95%EC%B6%95-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98
@@ -32,6 +32,24 @@ using namespace std;
 12    output code for P
 */
 
+/* LZW Decoding
+1    Initialize table with single character strings
+2    OLD = first input code
+3    output translation of OLD
+4    WHILE not end of input stream
+5        NEW = next input code
+6        IF NEW is not in the string table
+7               S = translation of OLD
+8               S = S + C
+9        ELSE
+10              S = translation of NEW
+11       output S
+12       C = first character of S
+13       OLD + C to the string table
+14       OLD = NEW
+15   END WHILE
+*/
+
 /*
 function LZW_Compress(input):
     initialize the dictionary (create an initial dictionary mapping of ASCII char)
@@ -49,6 +67,24 @@ function LZW_Compress(input):
 
     Output the code for the current pattern
     return compressed_data
+*/
+
+/*
+function LZW_Decompress(compressed):
+    initialize the dictionary(create an initial dictionary mapping of ASCII char)
+    initialize the previous code
+    Create an empty string to store the decompressed data
+
+    for code in compressed_data:
+        if code exists in the dictionary:
+            output the striing corresponding to the current code
+            add the prev_code + the first char of the current_code
+        else:
+            output the string corresponding to the prev_code + the first char of the prev_code
+            add the prev_code + first char of the prev_code to the dict & generate a new code
+            update the prev_code as the current_code
+
+     return compressed_data
 */
 
 void encode(const string& input, vector<int>& encoded) {
@@ -76,41 +112,8 @@ void encode(const string& input, vector<int>& encoded) {
     }
 }
 
-/* LZW Decoding
-1    Initialize table with single character strings
-2    OLD = first input code
-3    output translation of OLD
-4    WHILE not end of input stream
-5        NEW = next input code
-6        IF NEW is not in the string table
-7               S = translation of OLD
-8               S = S + C
-9        ELSE
-10              S = translation of NEW
-11       output S
-12       C = first character of S
-13       OLD + C to the string table
-14       OLD = NEW
-15   END WHILE
-*/
 
-/*
-function LZW_Decompress(compressed):
-    initialize the dictionary(create an initial dictionary mapping of ASCII char)
-    initialize the previous code
-    Create an empty string to store the decompressed data
 
-    for code in compressed_data:
-        if code exists in the dictionary:
-            output the striing corresponding to the current code
-            add the prev_code + the first char of the current_code
-        else:
-            output the string corresponding to the prev_code + the first char of the prev_code
-            add the prev_code + first char of the prev_code to the dict & generate a new code
-            update the prev_code as the current_code
-
-     return compressed_data
-*/
 
 void decode(const vector<int>& encoded, string& decoded) {
     unordered_map<int, string> dict;
