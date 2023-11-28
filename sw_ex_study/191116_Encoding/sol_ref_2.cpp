@@ -1,5 +1,5 @@
-#if 0
-//°³¼±ÀÛ¾÷: ½ºÆäÀÌ½º¹Ù¿Í »çÀüÀÎµ¦½º Ç¥½Ã bit¼ö Á¶Àı
+ï»¿#if 0
+//ê°œì„ ì‘ì—…: ìŠ¤í˜ì´ìŠ¤ë°”ì™€ ì‚¬ì „ì¸ë±ìŠ¤ í‘œì‹œ bitìˆ˜ ì¡°ì ˆ
 //SCORE: 1933614
 int my_strcmp(char* str1, char* str2, int size) {
     for (int k = 0; k < size; k++) {
@@ -47,10 +47,10 @@ int encode(char* src, char* paper, int papern) {
     int strlen = 0;
     while (pIdx < papern) {
         if (paper[pIdx] == ' ') {
-            //strlen==1 ÀÌ¸é »çÀüµî·Ï ¾ÈÇÔ -> ¼ÕÇØ
+            //strlen==1 ì´ë©´ ì‚¬ì „ë“±ë¡ ì•ˆí•¨ -> ì†í•´
             if (strlen == 1) {
                 //hitNum++;
-                put_bit(bitNote, strlen, 4, &bIdx); //½ºÆäÀÌ½º¹Ù
+                put_bit(bitNote, strlen, 4, &bIdx); //ìŠ¤í˜ì´ìŠ¤ë°”
                 put_bit(bitNote, nowstr[0] - 'a', 5, &bIdx);
 
             }
@@ -61,15 +61,15 @@ int encode(char* src, char* paper, int papern) {
                     if (my_dics[k] == strlen && my_strcmp(my_dic[k], nowstr, strlen) == 0) {
                         vocaFlag = true;
                         first_one = -1;
-                        put_bit(bitNote, 1, 1, &bIdx); //½ºÆäÀÌ½º¹Ù
-                        put_bit(bitNote, k, 10, &bIdx); //¼ıÀÚ
+                        put_bit(bitNote, 1, 1, &bIdx); //ìŠ¤í˜ì´ìŠ¤ë°”
+                        put_bit(bitNote, k, 10, &bIdx); //ìˆ«ì
                         break;
                     }
                 }
 
-                //¾øÀ¸¸é »çÀüµî·Ï + ÀûÀç
+                //ì—†ìœ¼ë©´ ì‚¬ì „ë“±ë¡ + ì ì¬
                 if (vocaFlag == false) {
-                    put_bit(bitNote, strlen, 4, &bIdx); //½ºÆäÀÌ½º¹Ù
+                    put_bit(bitNote, strlen, 4, &bIdx); //ìŠ¤í˜ì´ìŠ¤ë°”
                     my_dics[vocaCnt] = strlen;
                     for (int k = 0; k < strlen; k++) {
                         my_dic[vocaCnt][k] = nowstr[k];

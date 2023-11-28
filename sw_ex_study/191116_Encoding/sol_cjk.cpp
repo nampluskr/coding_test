@@ -1,6 +1,6 @@
-// SCORE: 1977288.01025 ÃÖÁØ°æ 2023.11.21
+ï»¿// SCORE: 1977288.01025 ìµœì¤€ê²½ 2023.11.21
 
-#if 1
+#if 0
 inline int max(int a, int b) { return a > b ? a : b; }
 inline int abs(int a) { return a < 0 ? a * -1 : a; }
 

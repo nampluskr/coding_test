@@ -1,5 +1,5 @@
-#if 0
-// 1883081.00886 Á¶ÁöÈÆ 2023.11.22
+ï»¿#if 0
+// 1883081.00886 ì¡°ì§€í›ˆ 2023.11.22
 int strcmp(char* s1, char* s2)
 {
 	while (*s1 && *s2) {
@@ -150,10 +150,10 @@ int encode(char* src, char* paper, int papern)
 
 	int b = 0;
 
-	// ´Ü¾îÁı ÀúÀå
+	// ë‹¨ì–´ì§‘ ì €ì¥
 	for (int i = 0; i < d; i++)
 	{
-		// ´Ü¾î ±æÀÌ
+		// ë‹¨ì–´ ê¸¸ì´
 		for (int j = 0; j < 3; j++)
 		{
 			int bit = (dLen[i] >> (2 - j)) & 0x01;

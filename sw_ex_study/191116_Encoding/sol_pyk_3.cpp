@@ -1,16 +1,16 @@
-// SCORE : 2089212.03194 ¹Ú¿µ±Ô 2023.11.10
+ï»¿// SCORE : 2089212.03194 ë°•ì˜ê·œ 2023.11.10
 
-//myDicÀ»  ¸¸µé ¶§ a~z, '\0' ±îÁö 5bit·Î Ç¥ÇöÀÌ °¡´ÉÇÏ¿©
-//myDic[1024][8] ¡æ myDic[1024][5] ¼öÁ¤ÇÏ¿´½À´Ï´Ù.
+//myDicì„  ë§Œë“¤ ë•Œ a~z, '\0' ê¹Œì§€ 5bitë¡œ í‘œí˜„ì´ ê°€ëŠ¥í•˜ì—¬
+//myDic[1024][8] â†’ myDic[1024][5] ìˆ˜ì •í•˜ì˜€ìŠµë‹ˆë‹¤.
 //1) encode()
 //
-//¨ç str Á¾·ù´Â MAX 1024°³·Î paper¸¦ ÀÐ¾î myDic[880][5] ÀÛ¼º
-//(seed¸¦ ¹Ù²Ù¸ç È®ÀÎÇØºÁµµ MAX 870ea Á¤µµ·Î È®ÀÎµÇ¾î 880À¸·Î ¼³Á¤)
-//¨è myDictÀÇ index°¡ 0~1023 »çÀÌÀÌ´Ï src¿¡ 10bit ´ÜÀ§·Î index°ª ÀúÀå
+//â‘  str ì¢…ë¥˜ëŠ” MAX 1024ê°œë¡œ paperë¥¼ ì½ì–´ myDic[880][5] ìž‘ì„±
+//(seedë¥¼ ë°”ê¾¸ë©° í™•ì¸í•´ë´ë„ MAX 870ea ì •ë„ë¡œ í™•ì¸ë˜ì–´ 880ìœ¼ë¡œ ì„¤ì •)
+//â‘¡ myDictì˜ indexê°€ 0~1023 ì‚¬ì´ì´ë‹ˆ srcì— 10bit ë‹¨ìœ„ë¡œ indexê°’ ì €ìž¥
 //
 //2) decode()
-//¨ç src¿¡¼­ 10bit ´ÜÀ§·Î ÀÐ¾î myDicIdx °¡Á®¿È
-//¨è myDic[myDicIdx] strÀ» 8byte·Î ÀüÈ¯ÇÏ¿© dest·Î ¿Å±è
+//â‘  srcì—ì„œ 10bit ë‹¨ìœ„ë¡œ ì½ì–´ myDicIdx ê°€ì ¸ì˜´
+//â‘¡ myDic[myDicIdx] strì„ 8byteë¡œ ì „í™˜í•˜ì—¬ destë¡œ ì˜®ê¹€
 
 #if 0
 #define MAX_DIC 880

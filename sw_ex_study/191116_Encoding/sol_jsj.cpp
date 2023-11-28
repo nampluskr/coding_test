@@ -1,4 +1,4 @@
-// SCORE: 19330723.12976 Á¶¼öÀå 2023.11.22
+ï»¿// SCORE: 19330723.12976 ì¡°ìˆ˜ì¥ 2023.11.22
 
 #if 0
 #define NOT_EXIST -1
@@ -11,7 +11,7 @@ int getCount(char* paper, const int rp, const int papern)
 	return cnt;
 }
 
-// srcÀÇ bIdx¿¡ len°³ÀÇ ºñÆ®¿¡ val°ªÀ» ±â·Ï.
+// srcì˜ bIdxì— lenê°œì˜ ë¹„íŠ¸ì— valê°’ì„ ê¸°ë¡.
 void write(bool* bits, int* bwp, int len, int val)
 {
 	for (int i = 0; i < len; i++)
@@ -31,8 +31,8 @@ void write2(char* dest, int* dwp, char* word, int len)
 	*dwp += (len + 1);
 }
 
-// srcÀÇ rpºÎÅÍ len¸¸Å­ ÀĞÀ» ¶§ÀÇ °ªÀ» ¹İÈ¯
-// ÃÖ¿ìÃøºÎÅÍ 1À» ±âÁØÀ¸·Î ÇÏ¿© ÁÂÃø½ÃÇÁÆ® 
+// srcì˜ rpë¶€í„° lenë§Œí¼ ì½ì„ ë•Œì˜ ê°’ì„ ë°˜í™˜
+// ìµœìš°ì¸¡ë¶€í„° 1ì„ ê¸°ì¤€ìœ¼ë¡œ í•˜ì—¬ ì¢Œì¸¡ì‹œí”„íŠ¸ 
 int read(bool* bits, int* rp, const int len)
 {
 	int val = 0;
@@ -75,7 +75,7 @@ void saveWord(char words[][8], int wordsLens[], int* wwp, char* paper, int pIdx,
 
 int encode(char* src, char* paper, int papern)
 {
-	// ÀÌÀü Å×ÄÉ ¾²·¹±â°ª Á¦°Å
+	// ì´ì „ í…Œì¼€ ì“°ë ˆê¸°ê°’ ì œê±°
 	for (int i = 0; i < 65536; i++)
 		src[i] = 0;
 
@@ -87,18 +87,18 @@ int encode(char* src, char* paper, int papern)
 
 	for (int prp = 0; prp < papern;) // paper read point
 	{
-		// ±ÛÀÚ¶ó¸é ¹Ù·Î ±â·Ï
+		// ê¸€ìë¼ë©´ ë°”ë¡œ ê¸°ë¡
 		int cnt = getCount(paper, prp, papern);
 		if (cnt == 1)
 		{
-			// µî·Ï¿©ºÎ(1bit) + (´Ü¾î±æÀÌ 3bit[2 ~ 7])¸¦ À§ÇÑ 4bitÈ°¿ë.
+			// ë“±ë¡ì—¬ë¶€(1bit) + (ë‹¨ì–´ê¸¸ì´ 3bit[2 ~ 7])ë¥¼ ìœ„í•œ 4bití™œìš©.
 			write(bits, &bwp, 4, 1);
 			write(bits, &bwp, 5, paper[prp] - 'a');
 			prp += (cnt + 1);
 			continue;
 		}
 
-		// »çÀü¿¡ µî·ÏµÈ ´Ü¾î¶ó¸é ÀÎµ¦½º·Î ±â·Ï
+		// ì‚¬ì „ì— ë“±ë¡ëœ ë‹¨ì–´ë¼ë©´ ì¸ë±ìŠ¤ë¡œ ê¸°ë¡
 		int wIdx = getWordIndex(words, wordsLens, &wwp, paper, prp, cnt);
 		if (wIdx != NOT_EXIST)
 		{
@@ -108,7 +108,7 @@ int encode(char* src, char* paper, int papern)
 			continue;
 		}
 
-		// »çÀü¿¡ µî·ÏµÈ ´Ü¾î°¡ ¾Æ´Ï¶ó¸é ±æÀÌ, ´Ü¾î Àü´Ş, ´Ü¾î ÀúÀå.
+		// ì‚¬ì „ì— ë“±ë¡ëœ ë‹¨ì–´ê°€ ì•„ë‹ˆë¼ë©´ ê¸¸ì´, ë‹¨ì–´ ì „ë‹¬, ë‹¨ì–´ ì €ì¥.
 		saveWord(words, wordsLens, &wwp, paper, prp, cnt);
 		write(bits, &bwp, 4, cnt);
 
@@ -133,7 +133,7 @@ int encode(char* src, char* paper, int papern)
 void decode(char* dest, char* src, int s)
 {
 	int dwp = 0;    // dest write point
-	// bitÇüÅÂ·Î º¹»ç
+	// bití˜•íƒœë¡œ ë³µì‚¬
 	bool bits[65536 * 8];
 
 	for (int i = 0; i < s * 8; i++)
@@ -147,7 +147,7 @@ void decode(char* dest, char* src, int s)
 
 	for (int rp = 0; rp < s * 8; )
 	{
-		// Ã¹ °ªÀÌ ÀÖ´Ù¸é, 10bit¸¦ ÀĞÀº ÈÄ ºÒ·¯¿Â ´Ü¾î¸¦ ±×´ë·Î ±â·ÏÇÑ´Ù.
+		// ì²« ê°’ì´ ìˆë‹¤ë©´, 10bitë¥¼ ì½ì€ í›„ ë¶ˆëŸ¬ì˜¨ ë‹¨ì–´ë¥¼ ê·¸ëŒ€ë¡œ ê¸°ë¡í•œë‹¤.
 		int firstValue = read(bits, &rp, 1);
 		if (firstValue == 1)
 		{
@@ -157,11 +157,11 @@ void decode(char* dest, char* src, int s)
 				break;
 			}
 
-			// wIdx°¡ °¡¸®Å°´Â ´Ü¾î·Î º¹±¸.
+			// wIdxê°€ ê°€ë¦¬í‚¤ëŠ” ë‹¨ì–´ë¡œ ë³µêµ¬.
 			write2(dest, &dwp, words[wIdx], wordLens[wIdx]);
 			continue;
 		}
-		// ´Ü±ÛÀÚ¶ó¸é ÇÑ°³ºĞ(5bit)¸¦ ÀĞ¾î¼­ ¹Ù·Î º¹±¸
+		// ë‹¨ê¸€ìë¼ë©´ í•œê°œë¶„(5bit)ë¥¼ ì½ì–´ì„œ ë°”ë¡œ ë³µêµ¬
 		int len = read(bits, &rp, 3);
 
 		if (len == 1)
@@ -175,7 +175,7 @@ void decode(char* dest, char* src, int s)
 			continue;
 		}
 
-		// »õ·Î µîÀåÇÏ´Â ´Ü¾î¶ó¸é ±æÀÌ¸¸Å­ ÀĞ¾î¼­ µî·Ï + º¹±¸.
+		// ìƒˆë¡œ ë“±ì¥í•˜ëŠ” ë‹¨ì–´ë¼ë©´ ê¸¸ì´ë§Œí¼ ì½ì–´ì„œ ë“±ë¡ + ë³µêµ¬.
 		for (int i = 0; i < len; i++)
 		{
 			int ch = read(bits, &rp, 5);
