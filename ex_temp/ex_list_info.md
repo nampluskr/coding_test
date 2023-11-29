@@ -33,4 +33,4 @@
 - 1805_Puzzle2
 - 1803_Trash_Bin
 
-1707_Bitmap2
+-1707_Bitmap2
