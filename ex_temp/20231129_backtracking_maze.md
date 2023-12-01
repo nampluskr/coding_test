@@ -1,3 +1,5 @@
+### x, y 대신 Position 객체를 이용해 작성 (그래프에 일반화 하여 적용 가능)
+
 ### [Backtracking] Show visited 2D array
 
 ```cpp
