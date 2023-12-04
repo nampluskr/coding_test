@@ -1,5 +1,5 @@
-﻿#if 1
-// 그래프 순서대로 순회
+﻿#if 0
+// 그래프 노드 차례대로 순회 (상위 노드정보 저장 목적)
 #include <vector>       // 링크드 리스트
 #include <stack>        // DFS 구현
 #include <queue>        // BFS 구현
@@ -20,11 +20,12 @@ void dfs1(int x) {
         visited[x] = 1;
         path.push_back(x);
 
-        for (int next : nodes[x])
-            if (!visited[next]) {
-                parent[next] = x;
+        for (int next : nodes[x]) {
+            if (!visited[next]) {   // parent 구할 때 필요
+                parent[next] = x;   // 아니면 생략 가능
                 dfs1(next);
             }
+        }
     }
 }
 
@@ -41,8 +42,8 @@ void dfs2(int x0) {
             visited[x] = true;
             path.push_back(x);
             for (int next : nodes[x]) {
-                if (!visited[next]) {
-                    parent[next] = x;
+                if (!visited[next]) {   // parent 구할 때 필요
+                    parent[next] = x;   // 아니면 생략 가능
                     S.push(next);
                 }
             }
@@ -58,9 +59,9 @@ void dfs3(int x) {
     // global 변수 visited, path 시작 노드 정보 반영 필수
     for (int next : nodes[x])
         if (!visited[next]) {
-            visited[next] = true;   // global
-            path.push_back(next);   // global
-            parent[next] = x;       // global
+            visited[next] = true;
+            path.push_back(next);
+            parent[next] = x;
             dfs3(next);
         }
 }
@@ -100,16 +101,14 @@ void trace_path(const int parent[], int start, int end) {
 
 void print_path(const vector<int>& path) {
     int i;
-    for (i = 0; i < path.size() - 1; i++) {
-        printf("[%d] - ", path[i]);
-    }
+    for (i = 0; i < path.size() - 1; i++) { printf("[%d] - ", path[i]); }
     printf("[%d]\n", path[i]);
 }
 
 void init() {
     for (int i = 0; i < N; i++) { 
         nodes[i].clear();   // 노드 연결정보 초기화
-        visited[i] = false; // 노드 방문정보 초기화
+        visited[i] = 0;     // 노드 방문정보 초기화
         parent[i] = -1;     // 상위 노드정보 초기화
     }
     path.clear();           // 노드 방문순서 초기화
@@ -129,24 +128,24 @@ int main()
     init();
     dfs1(0);
     print_path(path);
-    trace_path(parent, 0, 5);
+    //trace_path(parent, 0, 4);
 
-    init();
-    dfs2(0);
-    print_path(path);
-    trace_path(parent, 0, 5);
+    //init();
+    //dfs2(0);
+    //print_path(path);
+    //trace_path(parent, 0, 4);
 
-    init();
-    visited[0] = 1;
-    path.push_back(0);
-    dfs3(0);
-    print_path(path);
-    trace_path(parent, 0, 5);
+    //init();
+    //visited[0] = 1;
+    //path.push_back(0);
+    //dfs3(0);
+    //print_path(path);
+    //trace_path(parent, 0, 4);
 
-    init();
-    bfs(0);
-    print_path(path);
-    trace_path(parent, 0, 5);
+    //init();
+    //bfs(0);
+    //print_path(path);
+    //trace_path(parent, 0, 4);
 
     return 0;
 }
