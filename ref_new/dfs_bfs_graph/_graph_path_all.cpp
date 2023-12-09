@@ -1,4 +1,4 @@
-﻿#if 1
+﻿#if 0
 // 그래프 출발점에서 목적지 노드까지 모든 경로 탐색 (Backtracking)
 #include <vector>       // 링크드 리스트
 #include <stack>        // DFS 구현
