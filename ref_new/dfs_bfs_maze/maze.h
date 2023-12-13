@@ -14,32 +14,29 @@ int map[N][M] = {
 };
 int visited[N][M];
 
-int dx[] = { -1, 0, 1,  0 };
-int dy[] = { 0, 1, 0, -1 };
+int dr[] = { -1, 0, 1, 0 };
+int dc[] = { 0, 1, 0, -1 };
 
 struct Position {
-	int x, y;
+	int row, col;
 };
 
 struct Data {
 	Position pos;
-	int visited[N][M];	// deep copied
 	int dist;
+	int visited[N][M];	// deep copied
 
 	// for queue<Position>
-	Data(int x, int y, const int visited[N][M]) {
-		this->pos.x = x, this->pos.y = y;
+	Data(int row, int col, const int visited[N][M]) {
+		this->pos.row = row, this->pos.col = col, this->dist = 0;
 		for (int i = 0; i < N; i++)
 			for (int j = 0; j < M; j++)
 				this->visited[i][j] = visited[i][j];
-		this->dist = 0;
+		
 	}
 	// for priority_queue<Position>
-	Data(int x, int y, const int visited[N][M], int dist) {
-		this->pos.x = x, this->pos.y = y;
-		for (int i = 0; i < N; i++)
-			for (int j = 0; j < M; j++)
-				this->visited[i][j] = visited[i][j];
+	Data(int row, int col, int dist, const int visited[N][M]) {
+		Data(row, col, visited);
 		this->dist = dist;
 	}
 	bool operator<(const Data& data) const { return this->dist > data.dist; }
@@ -54,9 +51,8 @@ void display(const int map[N][M]) {
 	}
 }
 
-void init(int x0, int y0) {
+void init() {
 	for (int i = 0; i < N; i++)
 		for (int j = 0; j < M; j++)
 			visited[i][j] = 0;
-	visited[x0][y0] = 1;
 }
