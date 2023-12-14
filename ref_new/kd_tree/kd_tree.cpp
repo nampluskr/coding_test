@@ -3,83 +3,117 @@
 // https://rosettacode.org/wiki/K-d_tree#C
 
 #include <cstdio>
+#include <cmath>
 
-const int DIM = 2;
+#define ABS(x)  ((x > 0)? (x): -(x))
+#define DIM     2
 
-bool cmp(int key1[], int key2[]) {
-	for (int i = 0; i < DIM; ++i)
-		if (key1[i] != key2[i])
-			return false;
-	return true;
+bool compare(const int pt1[], const int pt2[]) {
+    for (int i = 0; i < DIM; ++i)
+        if (pt1[i] != pt2[i])
+            return false;
+    return true;
 }
 
+int distance(const int pt1[], const int pt2[]) {
+    int ret = 0;
+    for (int i = 0; i < DIM; i++)
+        ret += ABS(pt1[i] - pt2[i]);
+    return ret;
+}
+
+struct TreeNode {
+    int point[DIM];
+    int value;
+    TreeNode* left;
+    TreeNode* right;
+};
+
 struct KDTree {
-	struct TreeNode {
-		int key[DIM];
-		TreeNode* left;
-		TreeNode* right;
-	};
-	TreeNode* root;
+    TreeNode* root;
 
 private:
-	TreeNode* new_node(int key[]) {
-		struct TreeNode* node = new TreeNode;
-		for (int i = 0; i < DIM; i++) { node->key[i] = key[i]; }
-		node->left = node->right = nullptr;
-		return node;
-	}
-	TreeNode* insert_node(TreeNode* node, int key[], int depth) {
-		if (node == nullptr) { return new_node(key); }
+    TreeNode* new_node(const TreeNode& data) {
+        TreeNode* node = new TreeNode;
+        for (int i = 0; i < DIM; i++) { node->point[i] = data.point[i]; }
+        node->value = data.value;
+        node->left = node->right = nullptr;
+        return node;
+    }
+    TreeNode* insert_node(TreeNode* node, const TreeNode& data, int depth) {
+        if (node == nullptr) { return new_node(data); }
+        if (data.point[depth % DIM] < node->point[depth % DIM])
+            node->left = insert_node(node->left, data, depth + 1);
+        else
+            node->right = insert_node(node->right, data, depth + 1);
+        return node;
+    }
+    TreeNode* find_node(TreeNode* node, const int point[], int depth) {
+        if (node == nullptr) { return node; }
+        if (compare(node->point, point) == true) { return node; }
+        if (point[depth % DIM] < node->point[depth % DIM])
+            return find_node(node->left, point, depth + 1);
+        else
+            return find_node(node->right, point, depth + 1);
+    }
+    TreeNode* best = nullptr;
+    int min_dist = 0x7fffffff;
 
-		int k = depth % DIM;
-		if (key[k] < (node->key[k]))
-			node->left = insert_node(node->left, key, depth + 1);
-		else
-			node->right = insert_node(node->right, key, depth + 1);
-		return node;
-	}
-	TreeNode* find_node(TreeNode* node, int key[], int depth) {
-		if (node == nullptr) { return node; }
-		if (cmp(node->key, key)) { return node; }
+    void nearest_node(TreeNode* node, const int point[], int depth) {
+        if (node == nullptr) return;
 
-		int k = depth % DIM;
-		if (key[k] < node->key[k])
-			return find_node(node->left, key, depth + 1);
-		else
-			return find_node(node->right, key, depth + 1);
-	}
+        int cur_dist = distance(node->point, point);
+        if (best == nullptr || cur_dist < min_dist) {
+            min_dist = cur_dist;
+            best = node;
+        }
+        if (min_dist == 0) return;     // exact match
+
+        int diff = node->point[depth % DIM] - point[depth % DIM];
+        nearest_node(diff > 0 ? node->left : node->right, point, depth + 1);
+
+        if (ABS(diff) >= min_dist) return;
+        nearest_node(diff > 0 ? node->right : node->left, point, depth + 1);
+    }
 
 public:
-	void clear() { root = nullptr; }
-	void insert(int key[]) {
-		root = insert_node(root, key, 0);
-	}
-	bool find(int key[]) {
-		TreeNode* node = find_node(root, key, 0);
-		if (node != nullptr) return true;
-		return false;
-	}
+    void clear() { root = nullptr; }
+    void insert(const TreeNode& data) {
+        root = insert_node(root, data, 0);
+    }
+    int find(const int point[]) {
+        TreeNode* node = find_node(root, point, 0);
+        if (node != nullptr) return node->value;
+        return -1;
+    }
+    int nearest(const int point[]) {
+        nearest_node(root, point, 0);
+        if (best != nullptr) return best->value;
+        return -1;
+    }
 };
 KDTree kdt;
 
 
 int main()
 {
-	int points[][DIM] = { {3, 6}, {17, 15}, {13, 15}, {6, 12}, {9, 1}, {2, 7}, {10, 19} };
-	int n = sizeof(points) / sizeof(points[0]);
+    TreeNode points[] = { {{3, 6}, 0}, {{17, 15}, 1}, {{13, 15}, 2}, {{6, 12}, 3}, {{9, 1}, 4}, {{2, 7}, 5}, {{10, 19}, 6} };
+    int n = sizeof(points) / sizeof(points[0]);
 
-	kdt.clear();
+    kdt.clear();
+    for (int i = 0; i < n; i++)
+        kdt.insert(points[i]);
 
-	for (int i = 0; i < n; i++)
-		kdt.insert(points[i]);
+    int pt1[] = { 10, 19 };
+    printf(">> %d\n", kdt.find(pt1));
 
-	int key1[] = { 10, 19 };
-	printf(">> %d\n", kdt.find(key1));
+    int pt2[] = { 12, 19 };
+    printf(">> %d\n", kdt.find(pt2));
 
-	int key2[] = { 12, 19 };
-	printf(">> %d\n", kdt.find(key2));
+    int pt[] = { 10, 10 };
+    printf(">> %d\n", kdt.nearest(pt));
 
-	return 0;
+    return 0;
 }
 
 
