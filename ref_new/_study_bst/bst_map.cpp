@@ -2,50 +2,76 @@
 // Map using binary search tree
 #include <cstdio>
 
+template<typename Type>
+struct LinkedList {
+    struct ListNode {
+        Type data;
+        ListNode* next;
+    };
+    ListNode* head;
+    ListNode* tail;
+    int listSize;
+
+    //LinkedList<Type>() { clear(); }
+    ListNode* new_node(const Type& data) {
+        ListNode* node = new ListNode;
+        node->data = data;
+        node->next = nullptr;
+        return node;
+    }
+    void clear() { head = tail = nullptr; listSize = 0; }
+    void push_back(const Type& data) {
+        ListNode* node = new_node(data);
+        if (head == nullptr) { head = tail = node; }
+        else { tail->next = node; tail = node; }
+        listSize++;
+    }
+};
+
 template<typename Key, typename Value = int>
 struct Map {
 private:
-    // TreeNode : TreeNode<Key, Value>
-    struct TreeNode {
+    // MapNode : MapNode<Key, Value>
+    struct MapNode {
         Key key;
         Value value;
-        TreeNode* left;
-        TreeNode* right;
+        MapNode* left;
+        MapNode* right;
     };
-    TreeNode* root;
+    MapNode* root;
     int mapSize;
 
-    TreeNode* new_node(const Key& key, const Value& value) {
-        TreeNode* node = new TreeNode;
+    MapNode* new_node(const Key& key, const Value& value) {
+        MapNode* node = new MapNode;
         node->key = key;
         node->value = value;
         node->left = node->right = nullptr;
         return node;
     }
-    TreeNode* insert_node(TreeNode* node, const Key& key, const Value& value) {
+    MapNode* insert_node(MapNode* node, const Key& key, const Value& value) {
         if (node == nullptr) { return new_node(key, value); }
         else if (key < node->key) { node->left = insert_node(node->left, key, value); }
         else if (node->key < key) { node->right = insert_node(node->right, key, value); }
         return node;
     }
-    TreeNode* find_node(TreeNode* node, const Key& key) {
+    MapNode* find_node(MapNode* node, const Key& key) {
         if (node == nullptr) { return nullptr; }
         else if (node->key == key) { return node; }
         else if (key < node->key) { return find_node(node->left, key); }
         else if (node->key < key) { return find_node(node->right, key); }
     }
-    TreeNode* inorder_node(TreeNode* node) {
+    MapNode* inorder_node(MapNode* node) {
         if (node == nullptr) { return nullptr; }
         inorder_node(node->left);
         printf("([%d], %d) ", node->key, node->value);
         inorder_node(node->right);
     }
-    TreeNode* min_node(TreeNode* node) {
+    MapNode* min_node(MapNode* node) {
         if (node == nullptr) { return nullptr; }
         else if (node->left == nullptr) { return node->value; }
         return min_node(node->left);
     }
-    TreeNode* max_node(TreeNode* node) {
+    MapNode* max_node(MapNode* node) {
         if (node == nullptr) { return nullptr; }
         else if (node->right == nullptr) { return node->value; }
         return max_node(node->right);
@@ -53,7 +79,7 @@ private:
 
 public:
     void clear() { root = nullptr; mapSize = 0; }
-    void insert(const Key& key, const Value& value) { 
+    void emplace(const Key& key, const Value& value) { 
         root = insert_node(root, key, value);
         mapSize++;
     }
@@ -66,32 +92,61 @@ public:
     bool empty() { return mapSize == 0; }
     int size() { return mapSize; }
     Value find(const Key& key) {
-        auto node = find_node(root, key);
-        if (node != nullptr) { return node->value; }
-        return -1;      // Value() 초기화된 객체
+        MapNode* node = find_node(root, key);
+        if (node == nullptr) { return { -1 }; }
+        return node->value;
     }
-    Value operator[](const Key& key) { return find(key); }
+    Value& operator[](const Key& key) {
+        MapNode* node = find_node(root, key);
+        if (node == nullptr) { 
+            emplace(key, {});
+            node = find_node(root, key);
+        }
+        return node->value;
+    }
     Value top() { return max_node(root)->value; }
     Value bottom() { return min_node(root)->value; }
 };
 
-Map<int, int> map;
+/////////////////////////////////////////////////////////////////////
+void test_intMap() {
+    Map<int, int> intMap;
+    intMap.clear();
+
+    //intMap[20] = 200;
+    //intMap[10] = 100;
+    //intMap[30] = 300;
+    //intMap[40] = 400;
+    //intMap[50] = 500;
+
+    intMap.emplace(20, 200);
+    intMap.emplace(10, 100);
+    intMap.emplace(30, 300);
+    intMap.emplace(40, 400);
+    intMap.emplace(50, 500);
+
+    intMap.inorder();
+    printf(">> find(50): %d\n", intMap.find(50));
+    printf(">> find(90): %d\n", intMap.find(90));
+    printf(">> intMap[50]: %d\n", intMap[50]);
+    printf(">> intMap[90]: %d\n", intMap[90]);
+}
+
+void test_listMap() {
+    Map<int, LinkedList<int>> listMap;
+    listMap.clear();
+
+    //listMap.emplace(20, {});
+    listMap[20].push_back(100);
+    listMap[20].push_back(200);
+    listMap[20].push_back(300);
+}
 
 int main()
 {
-    map.clear();
-    map.insert(20, 0);
-    map.insert(10, 1);
-    map.insert(30, 2);
-    map.insert(40, 3);
-    map.insert(50, 4);
+    //test_intMap();
 
-    map.inorder();
-    printf(">> find(50): %d\n", map.find(50));
-    printf(">> find(90): %d\n", map.find(90));
-    printf(">> map[50]: %d\n", map[50]);
-    printf(">> map[90]: %d\n", map[90]);
-
+    test_listMap();
 
     return 0;
 }
